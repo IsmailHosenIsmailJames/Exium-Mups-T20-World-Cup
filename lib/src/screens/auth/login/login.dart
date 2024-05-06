@@ -1,6 +1,12 @@
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:exium_mups_t20_world_cup/src/models/success_login_responce.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/auth/signin/signin.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/home_page.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 
@@ -12,6 +18,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController numberController = TextEditingController();
+  final key = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,138 +53,176 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 height: 450,
                 width: MediaQuery.of(context).size.width * 0.92,
-                child: ListView(
-                  padding: const EdgeInsets.all(10),
-                  children: [
-                    Center(
-                      child: Text(
-                        "Login",
-                        style: TextStyle(
-                          color: Colors.blue.shade900,
-                          fontSize: 70,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.phone_android,
-                          color: Colors.blue.shade900,
-                        ),
-                        hintText: "type your phone number here...",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            10,
+                child: Form(
+                  key: key,
+                  child: ListView(
+                    padding: const EdgeInsets.all(10),
+                    children: [
+                      Center(
+                        child: Text(
+                          "Login",
+                          style: TextStyle(
+                            color: Colors.blue.shade900,
+                            fontSize: 70,
+                            fontWeight: FontWeight.w800,
                           ),
-                          borderSide: const BorderSide(width: 2),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      height: 40,
-                      width: 540,
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: const Row(
-                          children: [
-                            Spacer(),
-                            Text(
-                              "Login",
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.w600),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      TextFormField(
+                        controller: numberController,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.length != 11) {
+                            return " Please fill number properly";
+                          } else {
+                            try {
+                              int.parse(value);
+                              return null;
+                            } catch (e) {
+                              return " Please fill number properly";
+                            }
+                          }
+                        },
+                        maxLength: 11,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.phone_android,
+                            color: Colors.blue.shade900,
+                          ),
+                          hintText: "type your phone number here...",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              10,
                             ),
-                            Spacer(),
-                            Icon(
-                              Icons.arrow_forward,
-                            ),
-                          ],
+                            borderSide: const BorderSide(width: 2),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 1,
-                          width: 50,
-                          color: Colors.black,
+                      SizedBox(
+                        height: 40,
+                        width: 540,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (key.currentState!.validate()) {
+                              http.Response response = await http.post(
+                                Uri.parse(
+                                  "http://116.68.200.97:6048/api/v1/login",
+                                ),
+                                body: {"mobile_number": numberController.text},
+                              );
+                              if (response.statusCode == 200) {
+                                Fluttertoast.showToast(
+                                    msg: jsonDecode(response.body)["message"]);
+                                final userModelData = User.fromMap(
+                                    jsonDecode(response.body)['user']);
+                                final box = Hive.box("info");
+                                box.put("userInfo", userModelData.toJson());
+                                Get.offAll(() => HomePage(
+                                      userInfo: userModelData,
+                                    ));
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: jsonDecode(response.body)["message"]);
+                              }
+                            }
+                          },
+                          child: const Row(
+                            children: [
+                              Spacer(),
+                              Text(
+                                "Login",
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.w600),
+                              ),
+                              Spacer(),
+                              Icon(
+                                Icons.arrow_forward,
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(
-                          width: 10,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 1,
+                            width: 50,
+                            color: Colors.black,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          const Text(
+                            "or don't have account?",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            height: 1,
+                            width: 50,
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      SizedBox(
+                        height: 40,
+                        width: 540,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Get.off(() => const SignUp());
+                          },
+                          child: const Row(
+                            children: [
+                              Spacer(),
+                              Text(
+                                "Register using Mobile Number",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Spacer(),
+                              Icon(Icons.arrow_forward)
+                            ],
+                          ),
                         ),
-                        const Text(
-                          "or don't have account?",
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const Center(
+                        child: Text(
+                          "Sponsored by",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          height: 1,
-                          width: 50,
-                          color: Colors.black,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    SizedBox(
-                      height: 40,
-                      width: 540,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Get.off(() => const SignUp());
-                        },
-                        child: const Row(
-                          children: [
-                            Spacer(),
-                            Text(
-                              "Register using Mobile Number",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                            Spacer(),
-                            Icon(Icons.arrow_forward)
-                          ],
+                      ),
+                      SizedBox(
+                        height: 80,
+                        child: Image.asset(
+                          "assets/exium/Exium-MUPS_Exium_MUPS.png",
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Center(
-                      child: Text(
-                        "Sponsored by",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 80,
-                      child: Image.asset(
-                        "assets/exium/Exium-MUPS_Exium_MUPS.png",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

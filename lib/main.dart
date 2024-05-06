@@ -1,10 +1,11 @@
-import 'package:exium_mups_t20_world_cup/src/screens/auth/login/login.dart';
+import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:hive_flutter/adapters.dart';
 
 void main() async {
   await Hive.initFlutter();
+  await Hive.openBox("info");
   runApp(const MyApp());
 }
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const LoginPage(),
+      home: const InitRoutes(),
     );
   }
 }

@@ -1,0 +1,12 @@
+{
+    "success": true,
+    "message": "Login successful",
+    "user": {
+        "id": 1,
+        "full_name": "John Doe",
+        "mobile_number": "9876543210",
+        "status": 1,
+        "created_at": "any str",
+        "updated_at": "any str"
+    }
+}
