@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/models/success_login_responce.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/auth/signin/signin.dart';
-import 'package:exium_mups_t20_world_cup/src/screens/home/home_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
@@ -119,10 +119,9 @@ class _LoginPageState extends State<LoginPage> {
                                 final userModelData = User.fromMap(
                                     jsonDecode(response.body)['user']);
                                 final box = Hive.box("info");
-                                box.put("userInfo", userModelData.toJson());
-                                Get.offAll(() => HomePage(
-                                      userInfo: userModelData,
-                                    ));
+                                await box.put(
+                                    "userInfo", userModelData.toJson());
+                                Get.offAll(() => const InitRoutes());
                               } else {
                                 Fluttertoast.showToast(
                                     msg: jsonDecode(response.body)["message"]);

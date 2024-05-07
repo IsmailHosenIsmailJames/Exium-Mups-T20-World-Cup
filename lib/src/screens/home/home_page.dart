@@ -1,4 +1,3 @@
-import 'package:exium_mups_t20_world_cup/src/models/success_login_responce.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/drawer/drawer.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -8,8 +7,7 @@ import 'package:get/get.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class HomePage extends StatefulWidget {
-  final User userInfo;
-  const HomePage({super.key, required this.userInfo});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -18,11 +16,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int selectedPageIndex = 0;
   final userInfoControllerGetx = Get.put(UserInfoControllerGetx());
-  @override
-  void initState() {
-    userInfoControllerGetx.userInfo.value = widget.userInfo;
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

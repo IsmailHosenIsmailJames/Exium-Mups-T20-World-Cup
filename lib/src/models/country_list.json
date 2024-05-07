@@ -1,0 +1,14 @@
+{
+    "results": [
+        {
+            "country_id": 1,
+            "country_name": "Country A",
+            "country_image": "image-url"
+        },
+        {
+            "country_id": 2,
+            "country_name": "Country B",
+            "country_image": "image-url"
+        }
+    ]
+}

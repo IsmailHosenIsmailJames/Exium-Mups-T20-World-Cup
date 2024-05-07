@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/auth/login/login.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +12,6 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
 import '../../../models/success_login_responce.dart';
-import '../../home/home_page.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -239,20 +239,16 @@ class _SignUpState extends State<SignUp> {
                                   "pin_number": passCodeController.text,
                                 },
                               );
-                              print(response.body);
                               if (response.statusCode == 200) {
                                 Fluttertoast.showToast(
                                     msg: jsonDecode(response.body)["message"]);
                                 final userModelData = User.fromMap(
                                     jsonDecode(response.body)['user']);
                                 final box = Hive.box("info");
-                                print(userModelData.createdAt);
                                 await box.put(
                                     "userInfo", userModelData.toJson());
                                 Get.offAll(
-                                  () => HomePage(
-                                    userInfo: userModelData,
-                                  ),
+                                  () => const InitRoutes(),
                                 );
                               } else {
                                 Fluttertoast.showToast(
