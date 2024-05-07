@@ -2,6 +2,7 @@ import 'package:exium_mups_t20_world_cup/src/models/success_login_responce.dart'
 import 'package:exium_mups_t20_world_cup/src/screens/auth/login/login.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/home_page.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class InitRoutes extends StatelessWidget {
@@ -9,6 +10,7 @@ class InitRoutes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FlutterNativeSplash.remove();
     final box = Hive.box("info");
     return box.get("userInfo", defaultValue: null) == null
         ? const LoginPage()

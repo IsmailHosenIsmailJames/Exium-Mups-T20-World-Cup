@@ -1,9 +1,12 @@
 import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/route_manager.dart';
 import 'package:hive_flutter/adapters.dart';
 
 void main() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Hive.initFlutter();
   await Hive.openBox("info");
   runApp(const MyApp());
