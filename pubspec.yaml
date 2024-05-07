@@ -46,6 +46,7 @@ dependencies:
   http: ^1.2.1
   fluttertoast: ^8.2.5
   gap: ^3.0.1
+  flutter_native_splash: ^2.4.0
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +74,7 @@ flutter:
   assets:
     - assets/t20/t20-logo.png
     - assets/exium/Exium-MUPS_Exium_MUPS.png
+    - assets/splash/cricket_splah.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

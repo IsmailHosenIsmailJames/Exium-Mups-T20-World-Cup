@@ -1,0 +1,7 @@
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/splash/cricket_splah.png
+
+  android_12:
+    image: assets/splash/cricket_splah.png
+    icon_background_color: "#ffffff"
