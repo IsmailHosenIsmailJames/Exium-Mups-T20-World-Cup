@@ -4,9 +4,13 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:exium_mups_t20_world_cup/src/models/country_list_model.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/controllers/edit_team_controller_getx.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/edit_team/players_list_of_country/players_list_of_country.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/edit_team/your_team/your_team.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+
+import 'controllers/player_list_of_country_controller_getx.dart';
 
 class EditTeam extends StatefulWidget {
   const EditTeam({super.key});
@@ -16,6 +20,7 @@ class EditTeam extends StatefulWidget {
 }
 
 class _EditTeamState extends State<EditTeam> {
+  final playerListControlller = Get.put(PlayerListOfACountryController());
   final editTeamController = Get.put(EditTeamController());
 
   @override
@@ -97,7 +102,9 @@ class _EditTeamState extends State<EditTeam> {
                               ),
                               const Spacer(),
                               ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Get.to(() => const YourTeam());
+                                },
                                 child: const Text("Current Team"),
                               ),
                               const SizedBox(
@@ -114,38 +121,54 @@ class _EditTeamState extends State<EditTeam> {
                               ),
                               itemCount: controller.contryListResult.length,
                               itemBuilder: (context, index) {
-                                return Container(
-                                  margin: const EdgeInsets.all(5),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black54,
-                                              blurRadius: 7,
-                                              offset: Offset(3, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: CachedNetworkImage(
-                                          imageUrl:
-                                              "http://116.68.200.97:6048/images/flags/${controller.contryListResult[index].countryImage}",
-                                          placeholder: (context, url) =>
-                                              const CircularProgressIndicator(),
-                                          errorWidget: (context, url, error) =>
-                                              const Icon(Icons.error),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Text(
-                                        controller.contryListResult[index]
+                                return GestureDetector(
+                                  onTap: () {
+                                    Get.to(
+                                      () => PlayerList(
+                                        countryId: controller
+                                            .contryListResult[index].countryId,
+                                        countryImageUrl:
+                                            "http://116.68.200.97:6048/images/flags/${controller.contryListResult[index].countryImage}",
+                                        countryName: controller
+                                            .contryListResult[index]
                                             .countryName,
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500),
-                                      )
-                                    ],
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.all(5),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          decoration: const BoxDecoration(
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black54,
+                                                blurRadius: 7,
+                                                offset: Offset(3, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: CachedNetworkImage(
+                                            imageUrl:
+                                                "http://116.68.200.97:6048/images/flags/${controller.contryListResult[index].countryImage}",
+                                            placeholder: (context, url) =>
+                                                const CircularProgressIndicator(),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Icon(Icons.error),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        Text(
+                                          controller.contryListResult[index]
+                                              .countryName,
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 );
                               },
