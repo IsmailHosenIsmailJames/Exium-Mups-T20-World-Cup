@@ -151,7 +151,6 @@ class _PlayerListState extends State<PlayerList> {
                       itemBuilder: (context, index) {
                         String imageUrl = playerListControlller
                             .listOfPlayers[index].playerImage;
-
                         return Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
@@ -255,10 +254,53 @@ class _PlayerListState extends State<PlayerList> {
                                                   .removeAt(
                                                       indexOfSelectedPlayer);
                                             } else {
-                                              playerListControlller
-                                                  .selectedPlayer
-                                                  .add(playerListControlller
-                                                      .listOfPlayers[index]);
+                                              String role =
+                                                  playerListControlller
+                                                      .listOfPlayers[index]
+                                                      .role;
+                                              int alreadySelectedSameRole = 0;
+                                              for (int i = 0;
+                                                  i <
+                                                      playerListControlller
+                                                          .selectedPlayer
+                                                          .length;
+                                                  i++) {
+                                                if (role ==
+                                                    playerListControlller
+                                                        .selectedPlayer[i]
+                                                        .role) {
+                                                  alreadySelectedSameRole++;
+                                                }
+                                              }
+                                              if (PlayesrMaxMinRoules
+                                                      .max[role]! >
+                                                  alreadySelectedSameRole) {
+                                                playerListControlller
+                                                    .selectedPlayer
+                                                    .add(playerListControlller
+                                                        .listOfPlayers[index]);
+                                              } else {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                    title: Text(
+                                                        "Maximum ${PlayesrMaxMinRoules.max[role]} $role is allowed"),
+                                                    content: const Text(
+                                                        "Here is the roules :\nMinimum 2 Batsman & Maximum 4 Batsman.\nMinimum 2 Bowler & Maximum 4 Bowler.\nMinimum 2 All-Rounder & Maximum 4 All-Rounder.\nMinimum 1 Wicket Keeper & Maximum 3 Wicket Keeper."),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            "Got it"),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }
                                             }
                                           },
                                   );
@@ -280,4 +322,19 @@ class _PlayerListState extends State<PlayerList> {
       ),
     );
   }
+}
+
+class PlayesrMaxMinRoules {
+  static Map<String, int> max = {
+    "Batsman": 4,
+    "Bowler": 4,
+    "All-Rounder": 4,
+    "Wicket Keeper": 3,
+  };
+  static Map<String, int> min = {
+    "Batsman": 2,
+    "Bowler": 2,
+    "All-Rounder": 2,
+    "Wicket Keeper": 1,
+  };
 }
