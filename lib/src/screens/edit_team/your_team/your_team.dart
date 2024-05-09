@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
+import 'package:exium_mups_t20_world_cup/src/core/get_uri_images.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/controllers/player_list_of_country_controller_getx.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/edit_team/players_list_of_country/players_list_of_country.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
 class YourTeam extends StatefulWidget {
   const YourTeam({super.key});
@@ -14,6 +17,36 @@ class YourTeam extends StatefulWidget {
 
 class _YourTeamState extends State<YourTeam> {
   final playerListControlller = Get.put(PlayerListOfACountryController());
+  String? isTeamReady() {
+    List<String> roleList = [
+      "Batsman",
+      "Bowler",
+      "All-Rounder",
+      "Wicket Keeper"
+    ];
+    List<String> rulesOfSelectingPlayes = [
+      "Batsman Minimum 2 & Maximum 4",
+      "Bowler Minimum 2 & Maximum 4",
+      "All-Rounder Minimum 2 & Maximum 4",
+      "Wicket Keeper Minimum 1 & Maximum 3",
+    ];
+    for (int i = 0; i < roleList.length; i++) {
+      int count = 0;
+      for (int j = 0; j < playerListControlller.selectedPlayer.length; j++) {
+        if (playerListControlller.selectedPlayer[j].role == roleList[i]) {
+          count++;
+        }
+      }
+      if (count >= PlayesrMaxMinRoules.min[roleList[i]]! &&
+          count <= PlayesrMaxMinRoules.max[roleList[i]]!) {
+        continue;
+      } else {
+        return rulesOfSelectingPlayes[i];
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,26 +58,33 @@ class _YourTeamState extends State<YourTeam> {
           height: 56,
           width: 300,
           child: GetX<PlayerListOfACountryController>(
-            builder: (controller) => ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            builder: (controller) {
+              String? isReady = isTeamReady();
+              return ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-              ),
-              onPressed: controller.selectedPlayer.length < 11
-                  ? null
-                  : () {
-                      Get.to(
-                        () => const YourTeam(),
-                      );
-                    },
-              child: const Text(
-                "Save",
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ),
+                onPressed: isReady != null ||
+                        playerListControlller.selectedPlayer.length < 11
+                    ? null
+                    : () {},
+                child: isReady != null &&
+                        playerListControlller.selectedPlayer.length == 11
+                    ? Text(
+                        isReady,
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.black),
+                      )
+                    : const Text(
+                        "Save",
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+              );
+            },
           ),
         ),
       ),
@@ -97,15 +137,19 @@ class _YourTeamState extends State<YourTeam> {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(100),
                                       child: FutureBuilder(
-                                        future: http.get(Uri.parse(
-                                            "http://116.68.200.97:6048/images/players/$imageUrl")),
+                                        future: getUriImage(
+                                            "http://116.68.200.97:6048/images/players/$imageUrl"),
                                         builder: (context, snapshot) {
                                           if (snapshot.hasData) {
-                                            http.Response response =
-                                                snapshot.data!;
-                                            if (response.statusCode == 200) {
-                                              return Image.memory(
-                                                  response.bodyBytes);
+                                            Uint8List? data = snapshot.data;
+                                            if (data != null) {
+                                              return Image.memory(data);
+                                            } else {
+                                              return const Icon(
+                                                FluentIcons.person_32_regular,
+                                                size: 40,
+                                                color: Colors.grey,
+                                              );
                                             }
                                           }
                                           if (snapshot.connectionState ==

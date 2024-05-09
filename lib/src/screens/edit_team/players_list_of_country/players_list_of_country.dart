@@ -286,8 +286,32 @@ class _PlayerListState extends State<PlayerList> {
                                                       AlertDialog(
                                                     title: Text(
                                                         "Maximum ${PlayesrMaxMinRoules.max[role]} $role is allowed"),
-                                                    content: const Text(
-                                                        "Here is the roules :\nMinimum 2 Batsman & Maximum 4 Batsman.\nMinimum 2 Bowler & Maximum 4 Bowler.\nMinimum 2 All-Rounder & Maximum 4 All-Rounder.\nMinimum 1 Wicket Keeper & Maximum 3 Wicket Keeper."),
+                                                    content: const Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Here are the roules :",
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        Divider(
+                                                          height: 2,
+                                                        ),
+                                                        Text(
+                                                          "1. Batsman Minimum 2 & Maximum 4\n2. Bowler Minimum 2 & Maximum 4\n3. All-Rounder Minimum 2 & Maximum 4\n4. Wicket Keeper Minimum 1 & Maximum 3",
+                                                        ),
+                                                      ],
+                                                    ),
                                                     actions: [
                                                       TextButton(
                                                         onPressed: () {
@@ -295,7 +319,13 @@ class _PlayerListState extends State<PlayerList> {
                                                               context);
                                                         },
                                                         child: const Text(
-                                                            "Got it"),
+                                                          "Got it",
+                                                          style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
