@@ -48,7 +48,6 @@ dependencies:
   gap: ^3.0.1
   flutter_native_splash: ^2.4.0
   flutter_launcher_icons: ^0.13.1
-  cached_network_image: ^3.3.1
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:exium_mups_t20_world_cup/src/core/get_uri_images.dart';
 import 'package:exium_mups_t20_world_cup/src/models/players_info_model.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/controllers/player_list_of_country_controller_getx.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -8,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+
+import '../your_team/your_team.dart';
 
 class PlayerList extends StatefulWidget {
   final int countryId;
@@ -57,22 +60,37 @@ class _PlayerListState extends State<PlayerList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        extendedPadding: EdgeInsets.zero,
+        onPressed: null,
+        label: SizedBox(
+          height: 56,
+          width: 300,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10))),
+            onPressed: () {
+              Get.to(() => const YourTeam());
+            },
+            child: GetX<PlayerListOfACountryController>(
+              builder: (controller) {
+                return Text(
+                  "Your Courrent Team : ${11 - controller.selectedPlayer.length} Players Left",
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
       appBar: AppBar(
         leadingWidth: 35,
         title: Row(
           children: [
-            Container(
-              margin: const EdgeInsets.all(5),
-              height: 40,
-              child: CachedNetworkImage(
-                imageUrl: widget.countryImageUrl,
-                placeholder: (context, url) =>
-                    const CircularProgressIndicator(),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-                fit: BoxFit.cover,
-              ),
-            ),
-            const Spacer(),
             Text(
               widget.countryName,
               style: const TextStyle(
@@ -81,12 +99,26 @@ class _PlayerListState extends State<PlayerList> {
               ),
             ),
             const Spacer(),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text("Current Team"),
-            ),
-            const SizedBox(
-              width: 10,
+            Container(
+              margin: const EdgeInsets.all(5),
+              height: 40,
+              child: FutureBuilder(
+                future: getUriImage(widget.countryImageUrl),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    Uint8List? data = snapshot.data;
+                    if (data == null) {
+                      return const Icon(Icons.error);
+                    } else {
+                      return Image.memory(data);
+                    }
+                  }
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return const Icon(Icons.error);
+                  }
+                  return const CircularProgressIndicator();
+                },
+              ),
             ),
           ],
         ),
@@ -112,7 +144,9 @@ class _PlayerListState extends State<PlayerList> {
                 children: [
                   Expanded(
                     child: ListView.builder(
-                      padding: const EdgeInsets.all(10),
+                      cacheExtent: 100,
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 10, bottom: 100),
                       itemCount: playerListControlller.listOfPlayers.length,
                       itemBuilder: (context, index) {
                         String imageUrl = playerListControlller
@@ -133,14 +167,19 @@ class _PlayerListState extends State<PlayerList> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(100),
                                   child: FutureBuilder(
-                                    future: http.get(Uri.parse(
-                                        "http://116.68.200.97:6048/images/players/$imageUrl")),
+                                    future: getUriImage(
+                                        "http://116.68.200.97:6048/images/players/$imageUrl"),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
-                                        http.Response response = snapshot.data!;
-                                        if (response.statusCode == 200) {
-                                          return Image.memory(
-                                              response.bodyBytes);
+                                        Uint8List? response = snapshot.data;
+                                        if (response == null) {
+                                          return const Icon(
+                                            FluentIcons.person_32_regular,
+                                            size: 40,
+                                            color: Colors.grey,
+                                          );
+                                        } else {
+                                          return Image.memory(response);
                                         }
                                       }
                                       if (snapshot.connectionState ==
@@ -203,25 +242,26 @@ class _PlayerListState extends State<PlayerList> {
                                     }
                                   }
                                   return Checkbox.adaptive(
-                                      value: isSelected,
-                                      onChanged: playerListControlller
-                                                      .selectedPlayer.length >=
-                                                  11 &&
-                                              isSelected == false
-                                          ? null
-                                          : (value) {
-                                              if (isSelected) {
-                                                playerListControlller
-                                                    .selectedPlayer
-                                                    .removeAt(
-                                                        indexOfSelectedPlayer);
-                                              } else {
-                                                playerListControlller
-                                                    .selectedPlayer
-                                                    .add(playerListControlller
-                                                        .listOfPlayers[index]);
-                                              }
-                                            });
+                                    value: isSelected,
+                                    onChanged: playerListControlller
+                                                    .selectedPlayer.length >=
+                                                11 &&
+                                            isSelected == false
+                                        ? null
+                                        : (value) {
+                                            if (isSelected) {
+                                              playerListControlller
+                                                  .selectedPlayer
+                                                  .removeAt(
+                                                      indexOfSelectedPlayer);
+                                            } else {
+                                              playerListControlller
+                                                  .selectedPlayer
+                                                  .add(playerListControlller
+                                                      .listOfPlayers[index]);
+                                            }
+                                          },
+                                  );
                                 },
                               ),
                               const Gap(10),

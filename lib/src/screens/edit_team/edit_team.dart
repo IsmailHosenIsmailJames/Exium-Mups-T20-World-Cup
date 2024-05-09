@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:exium_mups_t20_world_cup/src/core/get_uri_images.dart';
 import 'package:exium_mups_t20_world_cup/src/models/country_list_model.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/controllers/edit_team_controller_getx.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/players_list_of_country/players_list_of_country.dart';
@@ -54,6 +55,33 @@ class _EditTeamState extends State<EditTeam> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        extendedPadding: EdgeInsets.zero,
+        onPressed: null,
+        label: SizedBox(
+          height: 56,
+          width: 300,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10))),
+            onPressed: () {
+              Get.to(() => const YourTeam());
+            },
+            child: GetX<PlayerListOfACountryController>(
+              builder: (controller) {
+                return Text(
+                  "Your Team : ${11 - controller.selectedPlayer.length} Players Left",
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -88,29 +116,12 @@ class _EditTeamState extends State<EditTeam> {
                     return SafeArea(
                       child: Column(
                         children: [
-                          Row(
-                            children: [
-                              const Spacer(
-                                flex: 4,
-                              ),
-                              const Text(
-                                "Select 11 Players",
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Spacer(),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Get.to(() => const YourTeam());
-                                },
-                                child: const Text("Current Team"),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                            ],
+                          const Text(
+                            "Select 11 Players",
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const Divider(),
                           Expanded(
@@ -149,15 +160,24 @@ class _EditTeamState extends State<EditTeam> {
                                               ),
                                             ],
                                           ),
-                                          child: CachedNetworkImage(
-                                            imageUrl:
-                                                "http://116.68.200.97:6048/images/flags/${controller.contryListResult[index].countryImage}",
-                                            placeholder: (context, url) =>
-                                                const CircularProgressIndicator(),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    const Icon(Icons.error),
-                                            fit: BoxFit.cover,
+                                          child: FutureBuilder(
+                                            future: getUriImage(
+                                                "http://116.68.200.97:6048/images/flags/${controller.contryListResult[index].countryImage}"),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasData) {
+                                                Uint8List? data = snapshot.data;
+                                                if (data == null) {
+                                                  return const Icon(
+                                                      Icons.error);
+                                                } else {
+                                                  return Image.memory(
+                                                    data,
+                                                    fit: BoxFit.cover,
+                                                  );
+                                                }
+                                              }
+                                              return const CircularProgressIndicator();
+                                            },
                                           ),
                                         ),
                                         Text(
