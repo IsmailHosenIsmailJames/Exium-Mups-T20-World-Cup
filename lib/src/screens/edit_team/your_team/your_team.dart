@@ -1,12 +1,15 @@
 import 'dart:typed_data';
 
 import 'package:exium_mups_t20_world_cup/src/core/get_uri_images.dart';
+import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
+import 'package:exium_mups_t20_world_cup/src/models/success_login_responce.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/controllers/player_list_of_country_controller_getx.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/players_list_of_country/players_list_of_country.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/adapters.dart';
 
 class YourTeam extends StatefulWidget {
   const YourTeam({super.key});
@@ -69,7 +72,123 @@ class _YourTeamState extends State<YourTeam> {
                 onPressed: isReady != null ||
                         playerListControlller.selectedPlayer.length < 11
                     ? null
-                    : () {},
+                    : () {
+                        TextEditingController teamName =
+                            TextEditingController();
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                      "Your Team Name",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const Gap(10),
+                                    TextFormField(
+                                      validator: (value) {
+                                        if (value!.trim().isEmpty) {
+                                          return "Plaese type your team name here";
+                                        }
+                                        return null;
+                                      },
+                                      autovalidateMode: AutovalidateMode.always,
+                                      controller: teamName,
+                                      decoration: InputDecoration(
+                                        hintText:
+                                            "Plaese type your team name here",
+                                        labelText: "Team Name",
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                      ),
+                                    ),
+                                    const Gap(10),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                          width: 130,
+                                          child: OutlinedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text("cancle"),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 130,
+                                          child: ElevatedButton(
+                                            onPressed: () async {
+                                              if (teamName.text
+                                                  .trim()
+                                                  .isNotEmpty) {
+                                                final box = Hive.box("info");
+                                                final userInfo = box.get(
+                                                    "userInfo",
+                                                    defaultValue: null);
+                                                User user =
+                                                    User.fromJson(userInfo);
+                                                List<Map> playersList = [];
+                                                for (int i = 0;
+                                                    i <
+                                                        playerListControlller
+                                                            .selectedPlayer
+                                                            .length;
+                                                    i++) {
+                                                  playersList.add(
+                                                      playerListControlller
+                                                          .selectedPlayer[i]
+                                                          .toMap());
+                                                }
+                                                Map<String, dynamic> teamData =
+                                                    {
+                                                  "userInfo": {
+                                                    "id": user.id,
+                                                    "fullName": user.fullName,
+                                                    "mobileNumber":
+                                                        user.mobileNumber,
+                                                  },
+                                                  "teamName": teamName.text,
+                                                  "playersOfTeam": playersList,
+                                                };
+                                                // TODO: send data to backend
+                                                //save data to local
+                                                await box.put(
+                                                    "team", playersList);
+                                                await box.put(
+                                                    "teamName", teamName.text);
+                                                Get.offAll(
+                                                  () => const InitRoutes(),
+                                                );
+                                              }
+                                            },
+                                            child: const Text("Save"),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
                 child: isReady != null &&
                         playerListControlller.selectedPlayer.length == 11
                     ? Text(
@@ -78,7 +197,7 @@ class _YourTeamState extends State<YourTeam> {
                             const TextStyle(fontSize: 16, color: Colors.black),
                       )
                     : const Text(
-                        "Save",
+                        "NEXT",
                         style: TextStyle(
                           fontSize: 16,
                         ),

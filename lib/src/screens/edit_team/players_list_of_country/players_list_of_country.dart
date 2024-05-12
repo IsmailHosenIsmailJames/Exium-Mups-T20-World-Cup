@@ -69,8 +69,10 @@ class _PlayerListState extends State<PlayerList> {
           width: 300,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10))),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
             onPressed: () {
               Get.to(() => const YourTeam());
             },

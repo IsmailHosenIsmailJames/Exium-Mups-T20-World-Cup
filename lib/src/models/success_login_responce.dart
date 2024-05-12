@@ -1,32 +1,34 @@
 import 'dart:convert';
 
-class Welcome {
+class SuccessLogInResponse {
   final bool success;
   final String message;
   final User user;
 
-  Welcome({
+  SuccessLogInResponse({
     required this.success,
     required this.message,
     required this.user,
   });
 
-  Welcome copyWith({
+  SuccessLogInResponse copyWith({
     bool? success,
     String? message,
     User? user,
   }) =>
-      Welcome(
+      SuccessLogInResponse(
         success: success ?? this.success,
         message: message ?? this.message,
         user: user ?? this.user,
       );
 
-  factory Welcome.fromJson(String str) => Welcome.fromMap(json.decode(str));
+  factory SuccessLogInResponse.fromJson(String str) =>
+      SuccessLogInResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Welcome.fromMap(Map<String, dynamic> json) => Welcome(
+  factory SuccessLogInResponse.fromMap(Map<String, dynamic> json) =>
+      SuccessLogInResponse(
         success: json["success"],
         message: json["message"],
         user: User.fromMap(json["user"]),
