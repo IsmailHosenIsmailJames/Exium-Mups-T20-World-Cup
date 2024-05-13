@@ -297,9 +297,10 @@ class _HomePageState extends State<HomePage> {
                         child: Text(
                           "12",
                           style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 0, 56, 141),
+                          ),
                         ),
                       ),
                     );
@@ -323,9 +324,10 @@ class _HomePageState extends State<HomePage> {
                               child: Text(
                                 "5",
                                 style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 0, 56, 141),
+                                ),
                               ),
                             ),
                           ],

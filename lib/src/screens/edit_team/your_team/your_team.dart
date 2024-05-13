@@ -1,15 +1,20 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:exium_mups_t20_world_cup/src/core/get_uri_images.dart';
-import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/models/success_login_responce.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/controllers/player_list_of_country_controller_getx.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/players_list_of_country/players_list_of_country.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../core/init_route.dart';
 
 class YourTeam extends StatefulWidget {
   const YourTeam({super.key});
@@ -144,6 +149,9 @@ class _YourTeamState extends State<YourTeam> {
                                                 User user =
                                                     User.fromJson(userInfo);
                                                 List<Map> playersList = [];
+                                                List<Map> playersListToSendAPI =
+                                                    [];
+
                                                 for (int i = 0;
                                                     i <
                                                         playerListControlller
@@ -154,27 +162,56 @@ class _YourTeamState extends State<YourTeam> {
                                                       playerListControlller
                                                           .selectedPlayer[i]
                                                           .toMap());
+
+                                                  playersListToSendAPI.add({
+                                                    "player_code":
+                                                        playerListControlller
+                                                            .selectedPlayer[i]
+                                                            .playerCode
+                                                  });
                                                 }
-                                                Map<String, dynamic> teamData =
-                                                    {
-                                                  "userInfo": {
-                                                    "id": user.id,
-                                                    "fullName": user.fullName,
-                                                    "mobileNumber":
-                                                        user.mobileNumber,
+
+                                                http.Response response =
+                                                    await http.post(
+                                                  Uri.parse(
+                                                    "http://116.68.200.97:6048/api/v1/save_player_select",
+                                                  ),
+                                                  headers: {
+                                                    HttpHeaders
+                                                            .contentTypeHeader:
+                                                        "application/json"
                                                   },
-                                                  "teamName": teamName.text,
-                                                  "playersOfTeam": playersList,
-                                                };
-                                                // TODO: send data to backend
-                                                //save data to local
-                                                await box.put(
-                                                    "team", playersList);
-                                                await box.put(
-                                                    "teamName", teamName.text);
-                                                Get.offAll(
-                                                  () => const InitRoutes(),
+                                                  body: jsonEncode(
+                                                    <String, dynamic>{
+                                                      "userInfo": {
+                                                        "id": user.id,
+                                                      },
+                                                      "teamName":
+                                                          teamName.text.trim(),
+                                                      "playersOfTeam":
+                                                          playersListToSendAPI,
+                                                    },
+                                                  ),
                                                 );
+
+                                                if (response.statusCode ==
+                                                    200) {
+                                                  //save data to local
+                                                  await box.put(
+                                                      "team", playersList);
+                                                  await box.put("teamName",
+                                                      teamName.text);
+                                                  Get.offAll(
+                                                    () => const InitRoutes(),
+                                                  );
+                                                  Fluttertoast.showToast(
+                                                      msg: jsonDecode(response
+                                                          .body)['message']);
+                                                } else {
+                                                  Fluttertoast.showToast(
+                                                      msg: jsonDecode(response
+                                                          .body)['error']);
+                                                }
                                               }
                                             },
                                             child: const Text("Save"),

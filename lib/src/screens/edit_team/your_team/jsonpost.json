@@ -1,24 +1,41 @@
 {
     "userInfo": {
-        "id": 2,
-        "fullName": "Ismail Hossain James",
-        "mobileNumber": "01741095333"
+        "id": 2
     },
-    "teamName": " Team Name",
+    "teamName": "my awesome team",
     "playersOfTeam": [
         {
-            "player_code": 1001,
-            "country_id": 1,
-            "player_name": "SHAKIB AL HASAN",
-            "role": "All-Rounder",
-            "player_image": "1001.png"
+            "player_code": 1001
         },
         {
-            "player_code": 1010,
-            "country_id": 1,
-            "player_name": " NASUM AHMED",
-            "role": "Bowler",
-            "player_image": "1010.png"
+            "player_code": 1002
+        },
+        {
+            "player_code": 1003
+        },
+        {
+            "player_code": 1004
+        },
+        {
+            "player_code": 1005
+        },
+        {
+            "player_code": 1006
+        },
+        {
+            "player_code": 1007
+        },
+        {
+            "player_code": 1008
+        },
+        {
+            "player_code": 1009
+        },
+        {
+            "player_code": 1010
+        },
+        {
+            "player_code": 1013
         }
     ]
 }

@@ -1,6 +1,7 @@
 import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/edit_team.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/live/live_criket_match.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -93,24 +94,49 @@ class _MyDrawerState extends State<MyDrawer> {
             Container(
               margin: const EdgeInsets.only(left: 10, right: 10),
               child: ElevatedButton(
-                  onPressed: () {
-                    Get.to(() => const EditTeam());
-                  },
-                  child: const Row(
-                    children: [
-                      Icon(
-                        FluentIcons.edit_24_regular,
+                onPressed: () {
+                  Get.to(() => const EditTeam());
+                },
+                child: const Row(
+                  children: [
+                    Icon(
+                      FluentIcons.edit_24_regular,
+                    ),
+                    Gap(20),
+                    Text(
+                      "Edit your team",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
-                      Gap(20),
-                      Text(
-                        "Edit your team",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Gap(10),
+            Container(
+              margin: const EdgeInsets.only(left: 10, right: 10),
+              child: ElevatedButton(
+                onPressed: () {
+                  Get.to(() => const LiveScore());
+                },
+                child: const Row(
+                  children: [
+                    Icon(
+                      FluentIcons.live_24_regular,
+                    ),
+                    Gap(20),
+                    Text(
+                      "Live Score",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
-                  )),
+                    ),
+                  ],
+                ),
+              ),
             ),
             const Spacer(),
             Container(
