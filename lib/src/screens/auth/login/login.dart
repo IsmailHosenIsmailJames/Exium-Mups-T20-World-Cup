@@ -107,6 +107,14 @@ class _LoginPageState extends State<LoginPage> {
                         child: ElevatedButton(
                           onPressed: () async {
                             if (key.currentState!.validate()) {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) => Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.blue.shade800,
+                                  ),
+                                ),
+                              );
                               http.Response response = await http.post(
                                 Uri.parse(
                                   "http://116.68.200.97:6048/api/v1/login",
@@ -121,7 +129,27 @@ class _LoginPageState extends State<LoginPage> {
                                 final box = Hive.box("info");
                                 await box.put(
                                     "userInfo", userModelData.toJson());
-                                Get.offAll(() => const InitRoutes());
+
+                                http.Response response2 = await http.get(
+                                  Uri.parse(
+                                    "http://116.68.200.97:6048/api/v1/selected_player_list?user_id=${userModelData.id}",
+                                  ),
+                                );
+
+                                if (response2.statusCode == 200) {
+                                  final decodeData = jsonDecode(response2.body);
+                                  List<Map> listOfPalyers =
+                                      List<Map>.from(decodeData["data"]);
+                                  if (listOfPalyers.length == 11) {
+                                    await box.put("team", listOfPalyers);
+                                    await box.put(
+                                      "teamName",
+                                      listOfPalyers[0]['team_name'],
+                                    );
+                                  }
+                                }
+
+                                await Get.offAll(() => const InitRoutes());
                               } else {
                                 Fluttertoast.showToast(
                                     msg: jsonDecode(response.body)["message"]);

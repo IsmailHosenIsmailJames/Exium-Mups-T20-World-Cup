@@ -40,10 +40,16 @@ class _PlayerListState extends State<PlayerList> {
       http.Response response = await http.get(Uri.parse(
           "http://116.68.200.97:6048/api/v1/players/${widget.countryId}"));
       if (response.statusCode == 200) {
-        List countryList = List.from(jsonDecode(response.body)['results']);
-        for (int i = 0; i < countryList.length; i++) {
-          playerListControlller.listOfPlayers
-              .add(PlayerInfoModel.fromMap(countryList[i]));
+        List playersList = List.from(jsonDecode(response.body)['results']);
+        for (int i = 0; i < playersList.length; i++) {
+          playerListControlller.listOfPlayers.add(PlayerInfoModel(
+            playerCode: playersList[i]['player_code'],
+            playerName: playersList[i]['player_name'],
+            role: playersList[i]['role'],
+            playerImage: playersList[i]['player_image'],
+            countryName: widget.countryImageUrl,
+            countryImage: widget.countryName,
+          ));
         }
         playerListControlller.isLoading.value = false;
       } else {

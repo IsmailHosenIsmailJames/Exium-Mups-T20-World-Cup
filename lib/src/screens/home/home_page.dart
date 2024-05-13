@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
                 child: Container(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withOpacity(0.35),
                   child: GetX<PlayersController>(builder: (controller) {
                     List<Widget> batsman = [];
                     List<Widget> allrounder = [];
@@ -289,7 +289,8 @@ class _HomePageState extends State<HomePage> {
                           image: MemoryImage(response),
                           fit: BoxFit.fitHeight,
                         ),
-                        color: Colors.blue.shade800.withOpacity(0.3),
+                        color: const Color.fromARGB(255, 41, 141, 255)
+                            .withOpacity(0.2),
                       ),
                       alignment: Alignment.topRight,
                       child: const Padding(
@@ -312,7 +313,8 @@ class _HomePageState extends State<HomePage> {
                     margin: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Colors.blue.shade800.withOpacity(0.3),
+                      color: const Color.fromARGB(255, 41, 141, 255)
+                          .withOpacity(0.2),
                     ),
                     child: const Column(
                       children: [

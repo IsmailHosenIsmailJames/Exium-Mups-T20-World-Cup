@@ -2,32 +2,48 @@ import 'dart:convert';
 
 class PlayerInfoModel {
   final int playerCode;
-  final int countryId;
   final String playerName;
   final String role;
   final String playerImage;
+  final String countryName;
+  final String countryImage;
+  final int? runPoint;
+  final int? wicketPoint;
+  final int? totalPoint;
 
   PlayerInfoModel({
     required this.playerCode,
-    required this.countryId,
     required this.playerName,
     required this.role,
     required this.playerImage,
+    required this.countryName,
+    required this.countryImage,
+    this.runPoint,
+    this.wicketPoint,
+    this.totalPoint,
   });
 
   PlayerInfoModel copyWith({
     int? playerCode,
-    int? countryId,
     String? playerName,
     String? role,
     String? playerImage,
+    String? countryName,
+    String? countryImage,
+    int? runPoint,
+    int? wicketPoint,
+    int? totalPoint,
   }) =>
       PlayerInfoModel(
         playerCode: playerCode ?? this.playerCode,
-        countryId: countryId ?? this.countryId,
         playerName: playerName ?? this.playerName,
         role: role ?? this.role,
         playerImage: playerImage ?? this.playerImage,
+        countryName: countryName ?? this.countryName,
+        countryImage: countryImage ?? this.countryImage,
+        runPoint: runPoint ?? this.runPoint,
+        wicketPoint: wicketPoint ?? this.wicketPoint,
+        totalPoint: totalPoint ?? this.totalPoint,
       );
 
   factory PlayerInfoModel.fromJson(String str) =>
@@ -37,17 +53,25 @@ class PlayerInfoModel {
 
   factory PlayerInfoModel.fromMap(Map<String, dynamic> json) => PlayerInfoModel(
         playerCode: json["player_code"],
-        countryId: json["country_id"],
         playerName: json["player_name"],
         role: json["role"],
         playerImage: json["player_image"],
+        countryName: json["country_name"],
+        countryImage: json["country_image"],
+        runPoint: json["run_point"],
+        wicketPoint: json["wicket_point"],
+        totalPoint: json["total_point"],
       );
 
   Map<String, dynamic> toMap() => {
         "player_code": playerCode,
-        "country_id": countryId,
         "player_name": playerName,
         "role": role,
         "player_image": playerImage,
+        "country_name": countryName,
+        "country_image": countryImage,
+        "run_point": runPoint,
+        "wicket_point": wicketPoint,
+        "total_point": totalPoint,
       };
 }

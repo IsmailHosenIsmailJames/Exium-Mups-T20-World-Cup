@@ -1,7 +1,11 @@
 {
     "player_code": 1,
-    "country_id": 1,
     "player_name": "Player A",
     "role": "Role A",
-    "player_image": "image-url"
+    "player_image": "image-url",
+    "country_name": "Country A",
+    "country_image": "image-url",
+    "run_point": 10,
+    "wicket_point": 5,
+    "total_point": 15
 }
