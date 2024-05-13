@@ -48,6 +48,7 @@ dependencies:
   gap: ^3.0.1
   flutter_native_splash: ^2.4.0
   flutter_launcher_icons: ^0.13.1
+  flutter_inappwebview: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +79,7 @@ flutter:
     - assets/splash/cricket_splah.png
     - assets/background/home.jpg
     - assets/background/largest-cricket-stadium.jpg
+    - assets/html/matches.html
 
 
 flutter_launcher_icons:

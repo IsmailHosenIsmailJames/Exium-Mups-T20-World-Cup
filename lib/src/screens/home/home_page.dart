@@ -9,6 +9,7 @@ import 'package:exium_mups_t20_world_cup/src/screens/home/drawer/drawer.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -60,7 +61,7 @@ class _HomePageState extends State<HomePage> {
           child: Center(
             child: ClipRRect(
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
                 child: Container(
                   color: Colors.white.withOpacity(0.3),
                   child: GetX<PlayersController>(builder: (controller) {
@@ -168,26 +169,62 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         Container(
-          child: const Center(
-            child: Text("Fixtures"),
+          margin: const EdgeInsets.only(top: 95, bottom: 67),
+          child: InAppWebView(
+            initialUrlRequest: URLRequest(
+              url: WebUri(
+                "file:///android_asset/flutter_assets/assets/html/matches.html",
+              ),
+            ),
           ),
         ),
         Container(
-          child: const Center(
-            child: Text("Standing"),
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                "assets/background/home.jpg",
+              ),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Center(
+            child: ClipRRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+                child: Container(
+                  color: Colors.white.withOpacity(0.3),
+                ),
+              ),
+            ),
           ),
         ),
         Container(
-          child: const Center(
-            child: Text("Leader Board"),
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                "assets/background/home.jpg",
+              ),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Center(
+            child: ClipRRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+                child: Container(
+                  color: Colors.white.withOpacity(0.3),
+                ),
+              ),
+            ),
           ),
         ),
       ][selectedPageIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withOpacity(0.65),
           borderRadius: BorderRadius.circular(30),
         ),
+        margin: const EdgeInsets.all(3),
         child: SalomonBottomBar(
           currentIndex: selectedPageIndex,
           onTap: (i) => setState(() => selectedPageIndex = i),
