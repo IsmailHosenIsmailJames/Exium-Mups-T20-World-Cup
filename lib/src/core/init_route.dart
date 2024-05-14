@@ -25,8 +25,10 @@ class InitRoutes extends StatelessWidget {
         return const EditTeam();
       } else {
         final userInfoControllerGetx = Get.put(UserInfoControllerGetx());
-        userInfoControllerGetx.userInfo.value =
-            User.fromJson(box.get("userInfo"));
+        WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
+          userInfoControllerGetx.userInfo.value =
+              User.fromJson(box.get("userInfo"));
+        });
         List<Map> teamPlayersList = List<Map>.from(box.get("team"));
         final playersController = Get.put(PlayersController());
         List<PlayerInfoModel> listOfModelOfPlayers = [];
@@ -34,7 +36,9 @@ class InitRoutes extends StatelessWidget {
           listOfModelOfPlayers.add(PlayerInfoModel.fromMap(
               Map<String, dynamic>.from(teamPlayersList[i])));
         }
-        playersController.players.value = listOfModelOfPlayers;
+        WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
+          playersController.players.value = listOfModelOfPlayers;
+        });
         return const HomePage();
       }
     }

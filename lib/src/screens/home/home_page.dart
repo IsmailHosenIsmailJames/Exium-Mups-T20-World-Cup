@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -14,6 +15,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,6 +27,37 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int selectedPageIndex = 0;
   final userInfoControllerGetx = Get.put(UserInfoControllerGetx());
+
+  int sec = DateTime.now().millisecondsSinceEpoch;
+
+  Future<void> loadPlayersData() async {
+    try {
+      http.Response response2 = await http.get(
+        Uri.parse(
+          "http://116.68.200.97:6048/api/v1/selected_player_list?user_id=${userInfoControllerGetx.userInfo.value.id}",
+        ),
+      );
+
+      if (response2.statusCode == 200) {
+        final decodeData = jsonDecode(response2.body);
+        List<Map> listOfPalyers = List<Map>.from(decodeData["data"]);
+        if (listOfPalyers.length == 11) {
+          await Hive.box("info").put("team", listOfPalyers);
+          await Hive.box("info").put(
+            "teamName",
+            listOfPalyers[0]['team_name'],
+          );
+        }
+      }
+      // ignore: empty_catches
+    } catch (e) {}
+  }
+
+  @override
+  void initState() {
+    loadPlayersData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +72,18 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.blue.shade900.withOpacity(0.3),
               backgroundImage: const NetworkImage(
                 "https://upload.wikimedia.org/wikipedia/commons/9/92/Cricket-hit-wall-sticker1.png",
+              ),
+            ),
+            const Gap(10),
+            IconButton(
+              onPressed: () async {
+                if (DateTime.now().millisecondsSinceEpoch - sec > 10000) {
+                  loadPlayersData();
+                  sec = DateTime.now().millisecondsSinceEpoch;
+                }
+              },
+              icon: const Icon(
+                Icons.replay_outlined,
               ),
             ),
           ],
@@ -293,11 +338,11 @@ class _HomePageState extends State<HomePage> {
                             .withOpacity(0.2),
                       ),
                       alignment: Alignment.topRight,
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "12",
-                          style: TextStyle(
+                          "${player.totalPoint ?? 0}",
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Color.fromARGB(255, 0, 56, 141),
@@ -316,16 +361,16 @@ class _HomePageState extends State<HomePage> {
                       color: const Color.fromARGB(255, 41, 141, 255)
                           .withOpacity(0.2),
                     ),
-                    child: const Column(
+                    child: Column(
                       children: [
                         Row(
                           children: [
-                            Spacer(),
+                            const Spacer(),
                             Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "5",
-                                style: TextStyle(
+                                "${player.totalPoint ?? 0}",
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 0, 56, 141),
@@ -334,7 +379,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                        Icon(
+                        const Icon(
                           FluentIcons.person_32_regular,
                           size: 40,
                           color: Colors.black,

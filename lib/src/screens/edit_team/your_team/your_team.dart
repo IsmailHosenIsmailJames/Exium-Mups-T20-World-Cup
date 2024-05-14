@@ -6,6 +6,7 @@ import 'package:exium_mups_t20_world_cup/src/core/get_uri_images.dart';
 import 'package:exium_mups_t20_world_cup/src/models/success_login_responce.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/controllers/player_list_of_country_controller_getx.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/players_list_of_country/players_list_of_country.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/players_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,7 +18,8 @@ import 'package:http/http.dart' as http;
 import '../../../core/init_route.dart';
 
 class YourTeam extends StatefulWidget {
-  const YourTeam({super.key});
+  final bool willUpdate;
+  const YourTeam({super.key, required this.willUpdate});
 
   @override
   State<YourTeam> createState() => _YourTeamState();
@@ -132,7 +134,7 @@ class _YourTeamState extends State<YourTeam> {
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
-                                            child: const Text("cancle"),
+                                            child: const Text("cancel"),
                                           ),
                                         ),
                                         SizedBox(
@@ -142,6 +144,35 @@ class _YourTeamState extends State<YourTeam> {
                                               if (teamName.text
                                                   .trim()
                                                   .isNotEmpty) {
+                                                if (widget.willUpdate) {
+                                                  final previousTeam = Get.put(
+                                                      PlayersController());
+                                                  List<bool> isNoChange = [];
+                                                  for (int i = 0;
+                                                      i <
+                                                          previousTeam
+                                                              .players.length;
+                                                      i++) {
+                                                    isNoChange.add(
+                                                        playerListControlller
+                                                                .selectedPlayer[
+                                                                    i]
+                                                                .playerCode ==
+                                                            previousTeam
+                                                                .players[i]
+                                                                .playerCode);
+                                                  }
+                                                  if (isNoChange
+                                                      .contains(false)) {
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          "Can't save. No Change compared with previous",
+                                                      toastLength:
+                                                          Toast.LENGTH_LONG,
+                                                    );
+                                                    return;
+                                                  }
+                                                }
                                                 final box = Hive.box("info");
                                                 final userInfo = box.get(
                                                     "userInfo",
@@ -174,7 +205,9 @@ class _YourTeamState extends State<YourTeam> {
                                                 http.Response response =
                                                     await http.post(
                                                   Uri.parse(
-                                                    "http://116.68.200.97:6048/api/v1/save_player_select",
+                                                    widget.willUpdate
+                                                        ? "http://116.68.200.97:6048/api/v1/update_player_select"
+                                                        : "http://116.68.200.97:6048/api/v1/save_player_select",
                                                   ),
                                                   headers: {
                                                     HttpHeaders

@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:exium_mups_t20_world_cup/src/core/get_uri_images.dart';
 import 'package:exium_mups_t20_world_cup/src/models/country_list_model.dart';
+import 'package:exium_mups_t20_world_cup/src/models/players_info_model.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/controllers/edit_team_controller_getx.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/players_list_of_country/players_list_of_country.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/your_team/your_team.dart';
@@ -14,7 +15,8 @@ import 'package:http/http.dart' as http;
 import 'controllers/player_list_of_country_controller_getx.dart';
 
 class EditTeam extends StatefulWidget {
-  const EditTeam({super.key});
+  final List<PlayerInfoModel>? previousTeam;
+  const EditTeam({super.key, this.previousTeam});
 
   @override
   State<EditTeam> createState() => _EditTeamState();
@@ -26,6 +28,9 @@ class _EditTeamState extends State<EditTeam> {
 
   @override
   void initState() {
+    if (widget.previousTeam != null) {
+      playerListControlller.selectedPlayer.value = widget.previousTeam!;
+    }
     loadCountryList();
     super.initState();
   }
@@ -67,7 +72,9 @@ class _EditTeamState extends State<EditTeam> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10))),
             onPressed: () {
-              Get.to(() => const YourTeam());
+              Get.to(() => YourTeam(
+                    willUpdate: widget.previousTeam != null,
+                  ));
             },
             child: GetX<PlayerListOfACountryController>(
               builder: (controller) {
@@ -143,6 +150,7 @@ class _EditTeamState extends State<EditTeam> {
                                         countryName: controller
                                             .contryListResult[index]
                                             .countryName,
+                                        willUpdate: widget.previousTeam != null,
                                       ),
                                     );
                                   },

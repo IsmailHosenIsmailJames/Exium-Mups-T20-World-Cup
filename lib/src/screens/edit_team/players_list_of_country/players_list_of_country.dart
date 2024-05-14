@@ -16,11 +16,14 @@ class PlayerList extends StatefulWidget {
   final int countryId;
   final String countryName;
   final String countryImageUrl;
+  final bool willUpdate;
+
   const PlayerList(
       {super.key,
       required this.countryId,
       required this.countryName,
-      required this.countryImageUrl});
+      required this.countryImageUrl,
+      required this.willUpdate});
 
   @override
   State<PlayerList> createState() => _PlayerListState();
@@ -80,7 +83,9 @@ class _PlayerListState extends State<PlayerList> {
               ),
             ),
             onPressed: () {
-              Get.to(() => const YourTeam());
+              Get.to(() => YourTeam(
+                    willUpdate: widget.willUpdate,
+                  ));
             },
             child: GetX<PlayerListOfACountryController>(
               builder: (controller) {

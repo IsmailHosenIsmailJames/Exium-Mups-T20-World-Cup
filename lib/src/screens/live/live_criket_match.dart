@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class LiveScore extends StatefulWidget {
   const LiveScore({super.key});
@@ -10,6 +10,10 @@ class LiveScore extends StatefulWidget {
 class _LiveScoreState extends State<LiveScore> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Scaffold(
+      body: Center(
+        child: Text("Under Development"),
+      ),
+    );
   }
 }

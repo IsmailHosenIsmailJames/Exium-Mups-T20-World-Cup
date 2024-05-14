@@ -1,5 +1,6 @@
 import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/edit_team.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/players_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/live/live_criket_match.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -18,6 +19,7 @@ class MyDrawer extends StatefulWidget {
 
 class _MyDrawerState extends State<MyDrawer> {
   final userInformationController = Get.put(UserInfoControllerGetx());
+  final playersListController = Get.put(PlayersController());
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -95,7 +97,9 @@ class _MyDrawerState extends State<MyDrawer> {
               margin: const EdgeInsets.only(left: 10, right: 10),
               child: ElevatedButton(
                 onPressed: () {
-                  Get.to(() => const EditTeam());
+                  Get.to(() => EditTeam(
+                        previousTeam: playersListController.players,
+                      ));
                 },
                 child: const Row(
                   children: [
