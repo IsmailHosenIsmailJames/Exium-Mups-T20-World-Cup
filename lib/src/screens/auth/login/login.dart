@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/models/success_login_responce.dart';
@@ -219,7 +218,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const Center(
                   child: Text(
-                    "Sponsored by",
+                    "Powered By",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

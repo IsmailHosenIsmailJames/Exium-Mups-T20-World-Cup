@@ -79,7 +79,7 @@ flutter:
     - assets/splash/cricket_splah.png
     - assets/background/home.jpg
     - assets/background/largest-cricket-stadium.jpg
-    - assets/html/matches.html
+    - assets/html/fixes.js
 
 
 flutter_launcher_icons:

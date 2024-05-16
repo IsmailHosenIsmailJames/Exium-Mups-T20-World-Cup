@@ -88,7 +88,8 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        backgroundColor: Colors.white.withOpacity(0.4),
+        // toolbarHeight: 120,
+        // backgroundColor: Colors.white.withOpacity(0.4),
       ),
       extendBodyBehindAppBar: true,
       extendBody: true,
@@ -218,9 +219,13 @@ class _HomePageState extends State<HomePage> {
           child: InAppWebView(
             initialUrlRequest: URLRequest(
               url: WebUri(
-                "file:///android_asset/flutter_assets/assets/html/matches.html",
+                "https://www.icc-cricket.com/fixtures-results",
               ),
             ),
+            onLoadStop: (controller, url) {
+              controller.injectJavascriptFileFromAsset(
+                  assetFilePath: "assets/html/fixes.js");
+            },
           ),
         ),
         Container(
@@ -238,6 +243,13 @@ class _HomePageState extends State<HomePage> {
                 filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
                 child: Container(
                   color: Colors.white.withOpacity(0.3),
+                  child: InAppWebView(
+                    initialUrlRequest: URLRequest(
+                      url: WebUri(
+                        "https://www.google.com/search?q=t20+world+cup&oq=t20",
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -266,7 +278,7 @@ class _HomePageState extends State<HomePage> {
       ][selectedPageIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.65),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(30),
         ),
         margin: const EdgeInsets.all(3),
