@@ -7,10 +7,11 @@ import 'package:exium_mups_t20_world_cup/src/models/players_info_model.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/players_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/drawer/drawer.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/fixtures.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/standings.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -89,7 +90,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         // toolbarHeight: 120,
-        // backgroundColor: Colors.white.withOpacity(0.4),
+        backgroundColor: Colors.white.withOpacity(0.4),
       ),
       extendBodyBehindAppBar: true,
       extendBody: true,
@@ -215,46 +216,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         Container(
-          margin: const EdgeInsets.only(top: 95, bottom: 67),
-          child: InAppWebView(
-            initialUrlRequest: URLRequest(
-              url: WebUri(
-                "https://www.icc-cricket.com/fixtures-results",
-              ),
-            ),
-            onLoadStop: (controller, url) {
-              controller.injectJavascriptFileFromAsset(
-                  assetFilePath: "assets/html/fixes.js");
-            },
-          ),
+          margin: const EdgeInsets.only(top: 20, bottom: 33),
+          child: const Fixtures(),
         ),
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                "assets/background/home.jpg",
-              ),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Center(
-            child: ClipRRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-                child: Container(
-                  color: Colors.white.withOpacity(0.3),
-                  child: InAppWebView(
-                    initialUrlRequest: URLRequest(
-                      url: WebUri(
-                        "https://www.google.com/search?q=t20+world+cup&oq=t20",
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
+        const Standings(),
         Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
