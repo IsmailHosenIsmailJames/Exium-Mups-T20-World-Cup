@@ -161,7 +161,13 @@ class _EditTeamState extends State<EditTeam> {
                                     child: Column(
                                       children: [
                                         Container(
+                                          height: 80,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              3,
                                           decoration: const BoxDecoration(
+                                            color: Colors.white,
                                             boxShadow: [
                                               BoxShadow(
                                                 color: Colors.black54,
@@ -182,7 +188,7 @@ class _EditTeamState extends State<EditTeam> {
                                                 } else {
                                                   return Image.memory(
                                                     data,
-                                                    fit: BoxFit.cover,
+                                                    fit: BoxFit.fill,
                                                   );
                                                 }
                                               }
