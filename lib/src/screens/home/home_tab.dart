@@ -257,6 +257,7 @@ class _HomeTabState extends State<HomeTab> {
                           child: Container(
                             height: 220,
                             width: MediaQuery.of(context).size.width,
+                            margin: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               gradient: LinearGradient(
@@ -315,13 +316,13 @@ class _HomeTabState extends State<HomeTab> {
                             ),
                           ),
                         ),
-                        const Gap(10),
                         GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: () {
                             Get.to(() => const WebViewLiveScore());
                           },
                           child: Container(
+                            margin: const EdgeInsets.all(5),
                             padding: const EdgeInsets.all(10),
                             height: 170,
                             width: MediaQuery.of(context).size.width,
@@ -367,6 +368,7 @@ class _HomeTabState extends State<HomeTab> {
                                       children: [
                                         SizedBox(
                                           height: 80,
+                                          width: 150,
                                           child: team1 == null
                                               ? Image.asset(
                                                   'assets/background/flag.png')
@@ -404,7 +406,7 @@ class _HomeTabState extends State<HomeTab> {
                                                   .difference(snapshot.data ??
                                                       DateTime.now());
                                               return Text(
-                                                "${duration.inDays} Days, ${duration.inHours % 24} Hours,\n${duration.inMinutes % 60} Minutes, ${duration.inSeconds % 60} Sec",
+                                                "${duration.inDays} Days, \n${duration.inHours % 24} Hours,\n${duration.inMinutes % 60} Min, ${duration.inSeconds % 60} Sec",
                                                 textAlign: TextAlign.center,
                                               );
                                             },
@@ -419,6 +421,7 @@ class _HomeTabState extends State<HomeTab> {
                                       children: [
                                         SizedBox(
                                           height: 80,
+                                          width: 150,
                                           child: team2 == null
                                               ? Image.asset(
                                                   'assets/background/flag.png')
@@ -443,8 +446,8 @@ class _HomeTabState extends State<HomeTab> {
                             ),
                           ),
                         ),
-                        const Gap(10),
                         Container(
+                          margin: const EdgeInsets.all(5),
                           height: 200,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
