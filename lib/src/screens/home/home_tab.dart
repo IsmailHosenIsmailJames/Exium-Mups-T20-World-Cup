@@ -243,213 +243,19 @@ class _HomeTabState extends State<HomeTab> {
                   }
 
                   return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15, right: 15, top: 90, bottom: 90),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isPlayerList = true;
-                              });
-                            },
-                            behavior: HitTestBehavior.translucent,
-                            child: Container(
-                              height: 220,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    const Color.fromARGB(255, 79, 223, 255)
-                                        .withOpacity(0.5),
-                                    const Color.fromARGB(255, 136, 103, 255)
-                                        .withOpacity(0.5)
-                                  ],
-                                ),
-                              ),
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    userInformationController
-                                        .userInfo.value.fullName,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  Text(
-                                    Hive.box("info").get("teamName"),
-                                    style: const TextStyle(
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    totalPoint.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 50,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const Text(
-                                    "Team Points",
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                    ),
-                                  ),
-                                  const Gap(10),
-                                  Text(
-                                    "View details",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.blue.shade900,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const Gap(10),
-                          GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: () {
-                              Get.to(() => const WebViewLiveScore());
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              height: 170,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    const Color.fromARGB(255, 79, 223, 255)
-                                        .withOpacity(0.5),
-                                    const Color.fromARGB(255, 136, 103, 255)
-                                        .withOpacity(0.5)
-                                  ],
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    color: isLive
-                                        ? Colors.red
-                                        : Colors.white.withOpacity(0.5),
-                                    height: 25,
-                                    width: isLive ? 55 : 150,
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      isLive ? "LIVE" : "UPCOMMING",
-                                      style: TextStyle(
-                                        color: isLive
-                                            ? Colors.white
-                                            : Colors.blue.shade900,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                  const Gap(10),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Column(
-                                        children: [
-                                          SizedBox(
-                                            height: 80,
-                                            child: team1 == null
-                                                ? Image.asset(
-                                                    'assets/background/flag.png')
-                                                : Image.network(
-                                                    "http://116.68.200.97:6048/images/flags/${team1.countryImage}",
-                                                    fit: BoxFit.fitHeight,
-                                                  ),
-                                          ),
-                                          const Gap(5),
-                                          Text(
-                                            matchInfo[4],
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: [
-                                          Text(
-                                            "VS",
-                                            style: TextStyle(
-                                              fontSize: 40,
-                                              color: Colors.blue.shade900,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          if (!isLive)
-                                            StreamBuilder(
-                                              stream:
-                                                  getMiliseconSinceEpochSteam(),
-                                              builder: (context, snapshot) {
-                                                Duration duration = startEpoch
-                                                    .difference(snapshot.data ??
-                                                        DateTime.now());
-                                                return Text(
-                                                  "${duration.inDays} Days, ${duration.inHours % 24} Hours,\n${duration.inMinutes % 60} Minutes, ${duration.inSeconds % 60} Sec",
-                                                  textAlign: TextAlign.center,
-                                                );
-                                              },
-                                            ),
-                                        ],
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            height: 80,
-                                            child: team2 == null
-                                                ? Image.asset(
-                                                    'assets/background/flag.png')
-                                                : Image.network(
-                                                    "http://116.68.200.97:6048/images/flags/${team2.countryImage}",
-                                                    fit: BoxFit.fitHeight,
-                                                  ),
-                                          ),
-                                          const Gap(5),
-                                          Text(
-                                            matchInfo[5],
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          const Gap(10),
-                          Container(
-                            height: 200,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isPlayerList = true;
+                            });
+                          },
+                          behavior: HitTestBehavior.translucent,
+                          child: Container(
+                            height: 220,
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
@@ -463,16 +269,205 @@ class _HomeTabState extends State<HomeTab> {
                                       .withOpacity(0.5)
                                 ],
                               ),
-                              image: const DecorationImage(
-                                image: AssetImage(
-                                  "assets/exium/Exium-MUPS_Exium_MUPS.png",
+                            ),
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  userInformationController
+                                      .userInfo.value.fullName,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                  ),
                                 ),
-                                fit: BoxFit.cover,
-                              ),
+                                Text(
+                                  Hive.box("info").get("teamName"),
+                                  style: const TextStyle(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  totalPoint.toString(),
+                                  style: const TextStyle(
+                                    fontSize: 50,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Text(
+                                  "Team Points",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                  ),
+                                ),
+                                const Gap(10),
+                                Text(
+                                  "View details",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.blue.shade900,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        const Gap(10),
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            Get.to(() => const WebViewLiveScore());
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            height: 170,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  const Color.fromARGB(255, 79, 223, 255)
+                                      .withOpacity(0.5),
+                                  const Color.fromARGB(255, 136, 103, 255)
+                                      .withOpacity(0.5)
+                                ],
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  color: isLive
+                                      ? Colors.red
+                                      : Colors.white.withOpacity(0.5),
+                                  height: 25,
+                                  width: isLive ? 55 : 150,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    isLive ? "LIVE" : "UPCOMMING",
+                                    style: TextStyle(
+                                      color: isLive
+                                          ? Colors.white
+                                          : Colors.blue.shade900,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                const Gap(10),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 80,
+                                          child: team1 == null
+                                              ? Image.asset(
+                                                  'assets/background/flag.png')
+                                              : Image.network(
+                                                  "http://116.68.200.97:6048/images/flags/${team1.countryImage}",
+                                                  fit: BoxFit.fitHeight,
+                                                ),
+                                        ),
+                                        const Gap(5),
+                                        Text(
+                                          matchInfo[4],
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Text(
+                                          "VS",
+                                          style: TextStyle(
+                                            fontSize: 40,
+                                            color: Colors.blue.shade900,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        if (!isLive)
+                                          StreamBuilder(
+                                            stream:
+                                                getMiliseconSinceEpochSteam(),
+                                            builder: (context, snapshot) {
+                                              Duration duration = startEpoch
+                                                  .difference(snapshot.data ??
+                                                      DateTime.now());
+                                              return Text(
+                                                "${duration.inDays} Days, ${duration.inHours % 24} Hours,\n${duration.inMinutes % 60} Minutes, ${duration.inSeconds % 60} Sec",
+                                                textAlign: TextAlign.center,
+                                              );
+                                            },
+                                          ),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                          height: 80,
+                                          child: team2 == null
+                                              ? Image.asset(
+                                                  'assets/background/flag.png')
+                                              : Image.network(
+                                                  "http://116.68.200.97:6048/images/flags/${team2.countryImage}",
+                                                  fit: BoxFit.fitHeight,
+                                                ),
+                                        ),
+                                        const Gap(5),
+                                        Text(
+                                          matchInfo[5],
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Gap(10),
+                        Container(
+                          height: 200,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                const Color.fromARGB(255, 79, 223, 255)
+                                    .withOpacity(0.5),
+                                const Color.fromARGB(255, 136, 103, 255)
+                                    .withOpacity(0.5)
+                              ],
+                            ),
+                            image: const DecorationImage(
+                              image: AssetImage(
+                                "assets/exium/Exium-MUPS_Exium_MUPS.png",
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
