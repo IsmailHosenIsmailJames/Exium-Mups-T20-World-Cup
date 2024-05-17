@@ -10,6 +10,7 @@ import 'package:exium_mups_t20_world_cup/src/screens/edit_team/players_list_of_c
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/your_team/your_team.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
 
 import 'controllers/player_list_of_country_controller_getx.dart';
@@ -40,6 +41,7 @@ class _EditTeamState extends State<EditTeam> {
       http.Response response = await http
           .get(Uri.parse("http://116.68.200.97:6048/api/v1/countries"));
       if (response.statusCode == 200) {
+        await Hive.box("info").put("country", response.body);
         List countryList = List.from(jsonDecode(response.body)['results']);
         for (int i = 0; i < countryList.length; i++) {
           editTeamController.contryListResult

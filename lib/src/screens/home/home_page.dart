@@ -1,13 +1,10 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:exium_mups_t20_world_cup/src/core/get_uri_images.dart';
-import 'package:exium_mups_t20_world_cup/src/models/players_info_model.dart';
-import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/players_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/drawer/drawer.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/fixtures.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/home_tab.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/standings.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
@@ -106,111 +103,11 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           child: Center(
-            child: ClipRRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-                child: Container(
-                  color: Colors.white.withOpacity(0.35),
-                  child: GetX<PlayersController>(builder: (controller) {
-                    List<Widget> batsman = [];
-                    List<Widget> allrounder = [];
-                    List<Widget> wicketkeeper = [];
-                    List<Widget> bowler = [];
-                    for (PlayerInfoModel player in controller.players) {
-                      if (player.role == "Batsman") {
-                        batsman.add(buildCardOfPlayers(player));
-                      } else if (player.role == "Bowler") {
-                        bowler.add(buildCardOfPlayers(player));
-                      } else if (player.role == "All-Rounder") {
-                        allrounder.add(buildCardOfPlayers(player));
-                      } else {
-                        wicketkeeper.add(buildCardOfPlayers(player));
-                      }
-                    }
-                    return ListView(
-                      padding: const EdgeInsets.only(
-                        left: 10,
-                        right: 10,
-                        top: 100,
-                        bottom: 70,
-                      ),
-                      children: [
-                        const Gap(10),
-                        const Center(
-                          child: Text(
-                            "Batsman",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const Divider(
-                          height: 2,
-                          color: Colors.black,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: batsman,
-                        ),
-                        const Gap(10),
-                        const Center(
-                          child: Text(
-                            "Batsman",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const Divider(
-                          height: 2,
-                          color: Colors.black,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: allrounder,
-                        ),
-                        const Gap(10),
-                        const Center(
-                          child: Text(
-                            "Wicket Keeper",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const Divider(
-                          height: 2,
-                          color: Colors.black,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: wicketkeeper,
-                        ),
-                        const Gap(10),
-                        const Center(
-                          child: Text(
-                            "Bowler",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const Divider(
-                          height: 2,
-                          color: Colors.black,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: bowler,
-                        ),
-                      ],
-                    );
-                  }),
-                ),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+              child: Container(
+                color: Colors.white.withOpacity(0.35),
+                child: const HomeTab(),
               ),
             ),
           ),
@@ -243,7 +140,7 @@ class _HomePageState extends State<HomePage> {
       ][selectedPageIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.white.withOpacity(0.8),
           borderRadius: BorderRadius.circular(30),
         ),
         margin: const EdgeInsets.all(3),
@@ -276,113 +173,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget buildCardOfPlayers(PlayerInfoModel player) {
-    return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 120,
-            width: 120,
-            child: FutureBuilder(
-              future: getUriImage(
-                  "http://116.68.200.97:6048/images/players/${player.playerImage}"),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  Uint8List? response = snapshot.data;
-                  if (response == null) {
-                    return const Icon(
-                      FluentIcons.person_32_regular,
-                      size: 40,
-                      color: Colors.black,
-                    );
-                  } else {
-                    return Container(
-                      padding: const EdgeInsets.all(2),
-                      margin: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          image: MemoryImage(response),
-                          fit: BoxFit.fitHeight,
-                        ),
-                        color: const Color.fromARGB(255, 41, 141, 255)
-                            .withOpacity(0.2),
-                      ),
-                      alignment: Alignment.topRight,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "${player.totalPoint ?? 0}",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 0, 56, 141),
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                }
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Container(
-                    padding: const EdgeInsets.all(2),
-                    margin: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromARGB(255, 41, 141, 255)
-                          .withOpacity(0.2),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Spacer(),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "${player.totalPoint ?? 0}",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 0, 56, 141),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Icon(
-                          FluentIcons.person_32_regular,
-                          size: 40,
-                          color: Colors.black,
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                return const Center(
-                    child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                ));
-              },
-            ),
-          ),
-          Center(
-            child: Text(
-              player.playerName,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

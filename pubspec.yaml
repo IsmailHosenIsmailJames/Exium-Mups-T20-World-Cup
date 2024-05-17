@@ -81,6 +81,7 @@ flutter:
     - assets/background/home.jpg
     - assets/background/largest-cricket-stadium.jpg
     - assets/html/fixes.js
+    - assets/background/flag.png
 
 
 flutter_launcher_icons:

@@ -2,7 +2,7 @@ import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/edit_team.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/players_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
-import 'package:exium_mups_t20_world_cup/src/screens/live/live_criket_match.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/experiment/web_view_live_score.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -123,7 +123,7 @@ class _MyDrawerState extends State<MyDrawer> {
               margin: const EdgeInsets.only(left: 10, right: 10),
               child: ElevatedButton(
                 onPressed: () {
-                  Get.to(() => const LiveScore());
+                  Get.to(() => const WebViewLiveScore());
                 },
                 child: const Row(
                   children: [
@@ -148,7 +148,9 @@ class _MyDrawerState extends State<MyDrawer> {
               child: ElevatedButton(
                 onPressed: () async {
                   final box = Hive.box("info");
-                  await box.delete("userInfo");
+                  await box.deleteFromDisk();
+                  await Hive.openBox("info");
+                  await Future.delayed(const Duration(milliseconds: 500));
                   Get.offAll(() => const InitRoutes());
                   Fluttertoast.showToast(msg: "LogOut successfull");
                 },
