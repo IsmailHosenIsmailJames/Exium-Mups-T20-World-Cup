@@ -53,11 +53,8 @@ class _StandingsState extends State<Standings> {
     return Scaffold(
       body: (isLoading)
           ? const Center(child: CupertinoActivityIndicator())
-          : Padding(
-              padding: const EdgeInsets.only(bottom: 30.0),
-              child: WebViewWidget(
-                controller: controller,
-              ),
+          : WebViewWidget(
+              controller: controller,
             ),
     );
   }

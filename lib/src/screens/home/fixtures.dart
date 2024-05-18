@@ -52,11 +52,8 @@ class _FixturesState extends State<Fixtures> {
     return Scaffold(
       body: (isLoading)
           ? const Center(child: CupertinoActivityIndicator())
-          : Padding(
-              padding: const EdgeInsets.only(bottom: 30.0),
-              child: WebViewWidget(
-                controller: controller,
-              ),
+          : WebViewWidget(
+              controller: controller,
             ),
     );
   }

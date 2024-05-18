@@ -255,343 +255,352 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
               );
             },
           )
-        : GetX<PlayersController>(
-            builder: (controller) {
-              int totalPoint = 0;
-              for (var e in controller.players) {
-                totalPoint += e.totalPoint ?? 0;
-              }
-              return StreamBuilder(
-                stream: getTimeStream(),
-                builder: (context, snapshot) {
-                  List<String> matchInfo = [];
-
-                  List<Result> contryListResult = [];
-
-                  for (int i = 0; i < countryList.length; i++) {
-                    contryListResult.add(Result.fromMap(countryList[i]));
+        : ListView(
+            children: [
+              GetX<PlayersController>(
+                builder: (controller) {
+                  int totalPoint = 0;
+                  for (var e in controller.players) {
+                    totalPoint += e.totalPoint ?? 0;
                   }
+                  return StreamBuilder(
+                    stream: getTimeStream(),
+                    builder: (context, snapshot) {
+                      List<String> matchInfo = [];
 
-                  for (int index = 0; index < listOfRows.length; index++) {
-                    List<String> listOfCellInRow = listOfRows[index].split(",");
-                    int day = int.parse(listOfCellInRow[1]);
-                    int month = int.parse(listOfCellInRow[2]);
-                    int year = int.parse(listOfCellInRow[3]);
-                    int hour =
-                        int.parse(listOfCellInRow[listOfCellInRow.length - 3]);
-                    int min =
-                        int.parse(listOfCellInRow[listOfCellInRow.length - 2]);
-                    if (listOfCellInRow[listOfCellInRow.length - 1] == 'PM') {
-                      hour += 12;
-                    }
-                    DateTime matchStartTime =
-                        DateTime(year, month, day, hour, min);
-                    DateTime matchEndTime =
-                        DateTime(year, month, day, hour + 4, min);
-                    int epocOfMatchSart = matchStartTime.millisecondsSinceEpoch;
+                      List<Result> contryListResult = [];
 
-                    int epocOfMatchEnd = matchEndTime.millisecondsSinceEpoch;
-                    int nowEpoc = DateTime.now().millisecondsSinceEpoch;
-                    if (nowEpoc > epocOfMatchSart && nowEpoc < epocOfMatchEnd) {
-                      matchInfo = listOfCellInRow;
+                      for (int i = 0; i < countryList.length; i++) {
+                        contryListResult.add(Result.fromMap(countryList[i]));
+                      }
 
-                      break;
-                    } else if (nowEpoc < epocOfMatchSart) {
-                      matchInfo = listOfCellInRow;
-                      break;
-                    }
-                  }
+                      for (int index = 0; index < listOfRows.length; index++) {
+                        List<String> listOfCellInRow =
+                            listOfRows[index].split(",");
+                        int day = int.parse(listOfCellInRow[1]);
+                        int month = int.parse(listOfCellInRow[2]);
+                        int year = int.parse(listOfCellInRow[3]);
+                        int hour = int.parse(
+                            listOfCellInRow[listOfCellInRow.length - 3]);
+                        int min = int.parse(
+                            listOfCellInRow[listOfCellInRow.length - 2]);
+                        if (listOfCellInRow[listOfCellInRow.length - 1] ==
+                            'PM') {
+                          hour += 12;
+                        }
+                        DateTime matchStartTime =
+                            DateTime(year, month, day, hour, min);
+                        DateTime matchEndTime =
+                            DateTime(year, month, day, hour + 4, min);
+                        int epocOfMatchSart =
+                            matchStartTime.millisecondsSinceEpoch;
 
-                  String countryName1 = matchInfo[4];
-                  String countryName2 = matchInfo[5];
-                  for (var x in countryList) {
-                    Result e = Result.fromMap(x);
-                    if (e.countryName.toLowerCase().trim() ==
-                        countryName1.toLowerCase().trim()) {}
-                    if (e.countryName.toLowerCase().trim() ==
-                        countryName2.toLowerCase().trim()) {}
-                  }
+                        int epocOfMatchEnd =
+                            matchEndTime.millisecondsSinceEpoch;
+                        int nowEpoc = DateTime.now().millisecondsSinceEpoch;
+                        if (nowEpoc > epocOfMatchSart &&
+                            nowEpoc < epocOfMatchEnd) {
+                          matchInfo = listOfCellInRow;
 
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isPlayerList = true;
-                            });
-                          },
-                          behavior: HitTestBehavior.translucent,
-                          child: Container(
-                            height: 220,
-                            width: MediaQuery.of(context).size.width,
-                            margin: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  const Color.fromARGB(255, 79, 223, 255)
-                                      .withOpacity(0.5),
-                                  const Color.fromARGB(255, 136, 103, 255)
-                                      .withOpacity(0.5)
-                                ],
-                              ),
-                            ),
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  userInformationController
-                                      .userInfo.value.fullName,
-                                  style: const TextStyle(
-                                    fontSize: 18,
+                          break;
+                        } else if (nowEpoc < epocOfMatchSart) {
+                          matchInfo = listOfCellInRow;
+                          break;
+                        }
+                      }
+
+                      String countryName1 = matchInfo[4];
+                      String countryName2 = matchInfo[5];
+                      for (var x in countryList) {
+                        Result e = Result.fromMap(x);
+                        if (e.countryName.toLowerCase().trim() ==
+                            countryName1.toLowerCase().trim()) {}
+                        if (e.countryName.toLowerCase().trim() ==
+                            countryName2.toLowerCase().trim()) {}
+                      }
+
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isPlayerList = true;
+                                });
+                              },
+                              behavior: HitTestBehavior.translucent,
+                              child: Container(
+                                height: 155,
+                                width: MediaQuery.of(context).size.width,
+                                margin: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color.fromARGB(255, 79, 223, 255)
+                                          .withOpacity(0.5),
+                                      const Color.fromARGB(255, 136, 103, 255)
+                                          .withOpacity(0.5)
+                                    ],
                                   ),
                                 ),
-                                Text(
-                                  Hive.box("info").get("teamName"),
-                                  style: const TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  totalPoint.toString(),
-                                  style: const TextStyle(
-                                    fontSize: 50,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const Text(
-                                  "Team Points",
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                  ),
-                                ),
-                                const Gap(10),
-                                Text(
-                                  "View details",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.blue.shade900,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.all(5),
-                          padding: const EdgeInsets.only(bottom: 10),
-
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                const Color.fromARGB(255, 79, 223, 255)
-                                    .withOpacity(0.5),
-                                const Color.fromARGB(255, 136, 103, 255)
-                                    .withOpacity(0.5)
-                              ],
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onTap: () {
-                                  if (urlOfLive.isNotEmpty) {
-                                    Get.to(() => WebViewLiveScore(
-                                          url: urlOfLive,
-                                        ));
-                                  } else {
-                                    Fluttertoast.showToast(
-                                        msg: "Loading... Please wait.");
-                                  }
-                                },
-                                child: const SizedBox(
-                                  height: 50,
-                                  child: Row(children: [
-                                    Spacer(
-                                      flex: 4,
+                                alignment: Alignment.center,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      userInformationController
+                                          .userInfo.value.fullName,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                      ),
                                     ),
+                                    Text(
+                                      Hive.box("info").get("teamName"),
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      totalPoint.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const Text(
+                                      "Team Points",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    const Gap(5),
                                     Text(
                                       "View details",
                                       style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color.fromARGB(255, 0, 50, 124),
+                                        fontSize: 18,
+                                        color: Colors.blue.shade900,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                    Spacer(
-                                      flex: 3,
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward,
-                                      color: Colors.black,
-                                      size: 30,
-                                    ),
-                                    Gap(10)
-                                  ]),
+                                  ],
                                 ),
                               ),
-                              SizedBox(
-                                height: 289,
-                                child: (isLoading)
-                                    ? const Center(
-                                        child: CupertinoActivityIndicator())
-                                    : WebViewWidget(
-                                        controller: controllerURL,
-                                      ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.all(5),
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    const Color.fromARGB(255, 79, 223, 255)
+                                        .withOpacity(0.5),
+                                    const Color.fromARGB(255, 136, 103, 255)
+                                        .withOpacity(0.5)
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
+                              child: Column(
+                                children: [
+                                  GestureDetector(
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: () {
+                                      if (urlOfLive.isNotEmpty) {
+                                        Get.to(() => WebViewLiveScore(
+                                              url: urlOfLive,
+                                            ));
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg: "Loading... Please wait.");
+                                      }
+                                    },
+                                    child: const SizedBox(
+                                      height: 50,
+                                      child: Row(children: [
+                                        Spacer(
+                                          flex: 4,
+                                        ),
+                                        Text(
+                                          "View details",
+                                          style: TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.w600,
+                                            color:
+                                                Color.fromARGB(255, 0, 50, 124),
+                                          ),
+                                        ),
+                                        Spacer(
+                                          flex: 3,
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_rounded,
+                                          color: Colors.black,
+                                          size: 30,
+                                        ),
+                                        Gap(10)
+                                      ]),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 270,
+                                    child: (isLoading)
+                                        ? const Center(
+                                            child: CupertinoActivityIndicator())
+                                        : WebViewWidget(
+                                            controller: controllerURL,
+                                          ),
+                                  ),
+                                ],
+                              ),
 
-                          // Column(
-                          //   children: [
-                          //     Container(
-                          //       color: isLive
-                          //           ? Colors.red
-                          //           : Colors.white.withOpacity(0.5),
-                          //       height: 25,
-                          //       width: isLive ? 55 : 150,
-                          //       alignment: Alignment.center,
-                          //       child: Text(
-                          //         isLive ? "LIVE" : "UPCOMMING",
-                          //         style: TextStyle(
-                          //           color: isLive
-                          //               ? Colors.white
-                          //               : Colors.blue.shade900,
-                          //           fontSize: 18,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //     const Gap(10),
-                          //     Row(
-                          //       mainAxisAlignment:
-                          //           MainAxisAlignment.spaceBetween,
-                          //       crossAxisAlignment: CrossAxisAlignment.center,
-                          //       children: [
-                          //         Column(
-                          //           children: [
-                          //             SizedBox(
-                          //               height: 80,
-                          //               width: 150,
-                          //               child: team1 == null
-                          //                   ? Image.asset(
-                          //                       'assets/background/flag.png')
-                          //                   : Image.network(
-                          //                       "http://116.68.200.97:6048/images/flags/${team1.countryImage}",
-                          //                       fit: BoxFit.fitHeight,
-                          //                     ),
-                          //             ),
-                          //             const Gap(5),
-                          //             Text(
-                          //               matchInfo[4],
-                          //               style: const TextStyle(
-                          //                 fontSize: 18,
-                          //                 fontWeight: FontWeight.w600,
-                          //               ),
-                          //             ),
-                          //           ],
-                          //         ),
-                          //         Column(
-                          //           children: [
-                          //             Text(
-                          //               "VS",
-                          //               style: TextStyle(
-                          //                 fontSize: 40,
-                          //                 color: Colors.blue.shade900,
-                          //                 fontWeight: FontWeight.w600,
-                          //               ),
-                          //             ),
-                          //             if (!isLive)
-                          //               StreamBuilder(
-                          //                 stream:
-                          //                     getMiliseconSinceEpochSteam(),
-                          //                 builder: (context, snapshot) {
-                          //                   Duration duration = startEpoch
-                          //                       .difference(snapshot.data ??
-                          //                           DateTime.now());
-                          //                   return Text(
-                          //                     "${duration.inDays} Days, \n${duration.inHours % 24} Hours,\n${duration.inMinutes % 60} Min, ${duration.inSeconds % 60} Sec",
-                          //                     textAlign: TextAlign.center,
-                          //                   );
-                          //                 },
-                          //               ),
-                          //           ],
-                          //         ),
-                          //         Column(
-                          //           crossAxisAlignment:
-                          //               CrossAxisAlignment.center,
-                          //           mainAxisAlignment:
-                          //               MainAxisAlignment.center,
-                          //           children: [
-                          //             SizedBox(
-                          //               height: 80,
-                          //               width: 150,
-                          //               child: team2 == null
-                          //                   ? Image.asset(
-                          //                       'assets/background/flag.png')
-                          //                   : Image.network(
-                          //                       "http://116.68.200.97:6048/images/flags/${team2.countryImage}",
-                          //                       fit: BoxFit.fitHeight,
-                          //                     ),
-                          //             ),
-                          //             const Gap(5),
-                          //             Text(
-                          //               matchInfo[5],
-                          //               style: const TextStyle(
-                          //                 fontSize: 18,
-                          //                 fontWeight: FontWeight.w600,
-                          //               ),
-                          //             ),
-                          //           ],
-                          //         ),
-                          //       ],
-                          //     )
-                          //   ],
-                          // ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.all(5),
-                          height: 100,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                const Color.fromARGB(255, 79, 223, 255)
-                                    .withOpacity(0.5),
-                                const Color.fromARGB(255, 136, 103, 255)
-                                    .withOpacity(0.5)
-                              ],
+                              // Column(
+                              //   children: [
+                              //     Container(
+                              //       color: isLive
+                              //           ? Colors.red
+                              //           : Colors.white.withOpacity(0.5),
+                              //       height: 25,
+                              //       width: isLive ? 55 : 150,
+                              //       alignment: Alignment.center,
+                              //       child: Text(
+                              //         isLive ? "LIVE" : "UPCOMMING",
+                              //         style: TextStyle(
+                              //           color: isLive
+                              //               ? Colors.white
+                              //               : Colors.blue.shade900,
+                              //           fontSize: 18,
+                              //         ),
+                              //       ),
+                              //     ),
+                              //     const Gap(10),
+                              //     Row(
+                              //       mainAxisAlignment:
+                              //           MainAxisAlignment.spaceBetween,
+                              //       crossAxisAlignment: CrossAxisAlignment.center,
+                              //       children: [
+                              //         Column(
+                              //           children: [
+                              //             SizedBox(
+                              //               height: 80,
+                              //               width: 150,
+                              //               child: team1 == null
+                              //                   ? Image.asset(
+                              //                       'assets/background/flag.png')
+                              //                   : Image.network(
+                              //                       "http://116.68.200.97:6048/images/flags/${team1.countryImage}",
+                              //                       fit: BoxFit.fitHeight,
+                              //                     ),
+                              //             ),
+                              //             const Gap(5),
+                              //             Text(
+                              //               matchInfo[4],
+                              //               style: const TextStyle(
+                              //                 fontSize: 18,
+                              //                 fontWeight: FontWeight.w600,
+                              //               ),
+                              //             ),
+                              //           ],
+                              //         ),
+                              //         Column(
+                              //           children: [
+                              //             Text(
+                              //               "VS",
+                              //               style: TextStyle(
+                              //                 fontSize: 40,
+                              //                 color: Colors.blue.shade900,
+                              //                 fontWeight: FontWeight.w600,
+                              //               ),
+                              //             ),
+                              //             if (!isLive)
+                              //               StreamBuilder(
+                              //                 stream:
+                              //                     getMiliseconSinceEpochSteam(),
+                              //                 builder: (context, snapshot) {
+                              //                   Duration duration = startEpoch
+                              //                       .difference(snapshot.data ??
+                              //                           DateTime.now());
+                              //                   return Text(
+                              //                     "${duration.inDays} Days, \n${duration.inHours % 24} Hours,\n${duration.inMinutes % 60} Min, ${duration.inSeconds % 60} Sec",
+                              //                     textAlign: TextAlign.center,
+                              //                   );
+                              //                 },
+                              //               ),
+                              //           ],
+                              //         ),
+                              //         Column(
+                              //           crossAxisAlignment:
+                              //               CrossAxisAlignment.center,
+                              //           mainAxisAlignment:
+                              //               MainAxisAlignment.center,
+                              //           children: [
+                              //             SizedBox(
+                              //               height: 80,
+                              //               width: 150,
+                              //               child: team2 == null
+                              //                   ? Image.asset(
+                              //                       'assets/background/flag.png')
+                              //                   : Image.network(
+                              //                       "http://116.68.200.97:6048/images/flags/${team2.countryImage}",
+                              //                       fit: BoxFit.fitHeight,
+                              //                     ),
+                              //             ),
+                              //             const Gap(5),
+                              //             Text(
+                              //               matchInfo[5],
+                              //               style: const TextStyle(
+                              //                 fontSize: 18,
+                              //                 fontWeight: FontWeight.w600,
+                              //               ),
+                              //             ),
+                              //           ],
+                              //         ),
+                              //       ],
+                              //     )
+                              //   ],
+                              // ),
                             ),
-                            image: const DecorationImage(
-                              image: AssetImage(
-                                "assets/exium/Exium-MUPS_Exium_MUPS.png",
-                              ),
-                              fit: BoxFit.cover,
+                            Container(
+                              margin: const EdgeInsets.all(5),
+                              height: 100,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color.fromARGB(255, 79, 223, 255)
+                                          .withOpacity(0.5),
+                                      const Color.fromARGB(255, 136, 103, 255)
+                                          .withOpacity(0.5)
+                                    ],
+                                  ),
+                                  image: const DecorationImage(
+                                    image: AssetImage(
+                                      "assets/exium/Exium-MUPS_Exium_MUPS.png",
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  border:
+                                      Border.all(color: Colors.blue.shade900)),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   );
                 },
-              );
-            },
+              ),
+            ],
           );
   }
 

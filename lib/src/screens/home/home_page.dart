@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
-
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/drawer/drawer.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/fixtures.dart';
@@ -89,52 +87,17 @@ class _HomePageState extends State<HomePage> {
         // toolbarHeight: 120,
         backgroundColor: Colors.white.withOpacity(0.4),
       ),
-      extendBodyBehindAppBar: true,
-      extendBody: true,
       drawer: const MyDrawer(),
       body: [
         Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                "assets/background/home.jpg",
-              ),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Center(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-              child: Container(
-                color: Colors.white.withOpacity(0.35),
-                child: const HomeTab(),
-              ),
-            ),
-          ),
+          color: Colors.white.withOpacity(0.35),
+          child: const HomeTab(),
         ),
-        Container(
-          margin: const EdgeInsets.only(top: 20, bottom: 33),
-          child: const Fixtures(),
-        ),
+        const Fixtures(),
         const Standings(),
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                "assets/background/home.jpg",
-              ),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Center(
-            child: ClipRRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-                child: Container(
-                  color: Colors.white.withOpacity(0.3),
-                ),
-              ),
-            ),
+        Center(
+          child: Container(
+            color: Colors.white.withOpacity(0.3),
           ),
         ),
       ][selectedPageIndex],
