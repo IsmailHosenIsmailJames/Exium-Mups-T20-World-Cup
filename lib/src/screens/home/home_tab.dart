@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:exium_mups_t20_world_cup/src/screens/home/experiment/fixtures_excel.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/experiment/web_view_live_score.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/get_uri_images.dart';
 import '../../models/country_list_model.dart';
@@ -31,6 +34,7 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   void initState() {
+    getLiveURL();
     if (Hive.box("info").get("country", defaultValue: null) == null) {
       getCountryList();
     } else {
@@ -52,6 +56,79 @@ class _HomeTabState extends State<HomeTab> {
       }
       // ignore: empty_catches
     } catch (e) {}
+  }
+
+  final controllerURL = WebViewController();
+  String javascript = '''
+var navElement = document.getElementById("nav");
+navElement.style.display = "none";
+var element = document.querySelector('.col-span-3');
+if (element) {
+    element.style.display = 'none';
+}
+var element = document.querySelector('.col-span-1');
+if (element) {
+    element.style.display = 'none';
+}
+var element = document.querySelector('.Footer_footer__cVJRj');
+if (element) {
+    element.style.display = 'none';
+}
+
+window.scrollBy(0, 48);
+
+function preventDefault(e) {
+    e.preventDefault();
+}
+
+function preventDefaultForScrollKeys(e) {
+    if (keys[e.keyCode]) {
+        preventDefault(e);
+        return false;
+    }
+}
+
+// modern Chrome requires { passive: false } when adding event
+var supportsPassive = false;
+try {
+    window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
+        get: function () { supportsPassive = true; }
+    }));
+} catch (e) { }
+
+var wheelOpt = supportsPassive ? { passive: false } : false;
+var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
+
+window.addEventListener('DOMMouseScroll', preventDefault, false); // older FF
+window.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
+window.addEventListener('touchmove', preventDefault, wheelOpt); // mobile
+window.addEventListener('keydown', preventDefaultForScrollKeys, false);
+''';
+  bool isLoading = true;
+  String urlOfLive = "";
+  void getLiveURL() async {
+    http.Response response = await http
+        .get(Uri.parse("http://116.68.200.97:6048/api/v1/live_match"));
+    if (response.statusCode == 200) {
+      String url = jsonDecode(response.body)["url"];
+      urlOfLive = url;
+      controllerURL
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setBackgroundColor(Colors.white)
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onPageFinished: (String url) {
+              controllerURL.runJavaScript(javascript);
+              isLoading = false;
+              setState(() {});
+            },
+            onWebResourceError: (WebResourceError error) {
+              //Things to do when the page has error when loading
+            },
+          ),
+        )
+        ..loadRequest(Uri.parse(url));
+    }
   }
 
   @override
@@ -187,16 +264,14 @@ class _HomeTabState extends State<HomeTab> {
               return StreamBuilder(
                 stream: getTimeStream(),
                 builder: (context, snapshot) {
-                  bool isLive = false;
                   List<String> matchInfo = [];
-                  Result? team1;
-                  Result? team2;
+
                   List<Result> contryListResult = [];
 
                   for (int i = 0; i < countryList.length; i++) {
                     contryListResult.add(Result.fromMap(countryList[i]));
                   }
-                  DateTime startEpoch = DateTime.now();
+
                   for (int index = 0; index < listOfRows.length; index++) {
                     List<String> listOfCellInRow = listOfRows[index].split(",");
                     int day = int.parse(listOfCellInRow[1]);
@@ -214,11 +289,10 @@ class _HomeTabState extends State<HomeTab> {
                     DateTime matchEndTime =
                         DateTime(year, month, day, hour + 4, min);
                     int epocOfMatchSart = matchStartTime.millisecondsSinceEpoch;
-                    startEpoch = matchStartTime;
+
                     int epocOfMatchEnd = matchEndTime.millisecondsSinceEpoch;
                     int nowEpoc = DateTime.now().millisecondsSinceEpoch;
                     if (nowEpoc > epocOfMatchSart && nowEpoc < epocOfMatchEnd) {
-                      isLive = true;
                       matchInfo = listOfCellInRow;
 
                       break;
@@ -233,13 +307,9 @@ class _HomeTabState extends State<HomeTab> {
                   for (var x in countryList) {
                     Result e = Result.fromMap(x);
                     if (e.countryName.toLowerCase().trim() ==
-                        countryName1.toLowerCase().trim()) {
-                      team1 = e;
-                    }
+                        countryName1.toLowerCase().trim()) {}
                     if (e.countryName.toLowerCase().trim() ==
-                        countryName2.toLowerCase().trim()) {
-                      team2 = e;
-                    }
+                        countryName2.toLowerCase().trim()) {}
                   }
 
                   return Center(
@@ -316,139 +386,185 @@ class _HomeTabState extends State<HomeTab> {
                             ),
                           ),
                         ),
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            Get.to(() => const WebViewLiveScore());
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.all(5),
-                            padding: const EdgeInsets.all(10),
-                            height: 170,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  const Color.fromARGB(255, 79, 223, 255)
-                                      .withOpacity(0.5),
-                                  const Color.fromARGB(255, 136, 103, 255)
-                                      .withOpacity(0.5)
-                                ],
-                              ),
-                            ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  color: isLive
-                                      ? Colors.red
-                                      : Colors.white.withOpacity(0.5),
-                                  height: 25,
-                                  width: isLive ? 55 : 150,
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    isLive ? "LIVE" : "UPCOMMING",
-                                    style: TextStyle(
-                                      color: isLive
-                                          ? Colors.white
-                                          : Colors.blue.shade900,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                                const Gap(10),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 80,
-                                          width: 150,
-                                          child: team1 == null
-                                              ? Image.asset(
-                                                  'assets/background/flag.png')
-                                              : Image.network(
-                                                  "http://116.68.200.97:6048/images/flags/${team1.countryImage}",
-                                                  fit: BoxFit.fitHeight,
-                                                ),
-                                        ),
-                                        const Gap(5),
-                                        Text(
-                                          matchInfo[4],
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text(
-                                          "VS",
-                                          style: TextStyle(
-                                            fontSize: 40,
-                                            color: Colors.blue.shade900,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        if (!isLive)
-                                          StreamBuilder(
-                                            stream:
-                                                getMiliseconSinceEpochSteam(),
-                                            builder: (context, snapshot) {
-                                              Duration duration = startEpoch
-                                                  .difference(snapshot.data ??
-                                                      DateTime.now());
-                                              return Text(
-                                                "${duration.inDays} Days, \n${duration.inHours % 24} Hours,\n${duration.inMinutes % 60} Min, ${duration.inSeconds % 60} Sec",
-                                                textAlign: TextAlign.center,
-                                              );
-                                            },
-                                          ),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          height: 80,
-                                          width: 150,
-                                          child: team2 == null
-                                              ? Image.asset(
-                                                  'assets/background/flag.png')
-                                              : Image.network(
-                                                  "http://116.68.200.97:6048/images/flags/${team2.countryImage}",
-                                                  fit: BoxFit.fitHeight,
-                                                ),
-                                        ),
-                                        const Gap(5),
-                                        Text(
-                                          matchInfo[5],
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )
+                        Container(
+                          margin: const EdgeInsets.all(5),
+                          padding: const EdgeInsets.only(bottom: 10),
+
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                const Color.fromARGB(255, 79, 223, 255)
+                                    .withOpacity(0.5),
+                                const Color.fromARGB(255, 136, 103, 255)
+                                    .withOpacity(0.5)
                               ],
                             ),
                           ),
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () {
+                                  if (urlOfLive.isNotEmpty) {
+                                    Get.to(() => WebViewLiveScore(
+                                          url: urlOfLive,
+                                        ));
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: "Loading... Please wait.");
+                                  }
+                                },
+                                child: const SizedBox(
+                                  height: 50,
+                                  child: Row(children: [
+                                    Spacer(
+                                      flex: 4,
+                                    ),
+                                    Text(
+                                      "View details",
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color.fromARGB(255, 0, 50, 124),
+                                      ),
+                                    ),
+                                    Spacer(
+                                      flex: 3,
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward,
+                                      color: Colors.black,
+                                      size: 30,
+                                    ),
+                                    Gap(10)
+                                  ]),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 289,
+                                child: (isLoading)
+                                    ? const Center(
+                                        child: CupertinoActivityIndicator())
+                                    : WebViewWidget(
+                                        controller: controllerURL,
+                                      ),
+                              ),
+                            ],
+                          ),
+
+                          // Column(
+                          //   children: [
+                          //     Container(
+                          //       color: isLive
+                          //           ? Colors.red
+                          //           : Colors.white.withOpacity(0.5),
+                          //       height: 25,
+                          //       width: isLive ? 55 : 150,
+                          //       alignment: Alignment.center,
+                          //       child: Text(
+                          //         isLive ? "LIVE" : "UPCOMMING",
+                          //         style: TextStyle(
+                          //           color: isLive
+                          //               ? Colors.white
+                          //               : Colors.blue.shade900,
+                          //           fontSize: 18,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     const Gap(10),
+                          //     Row(
+                          //       mainAxisAlignment:
+                          //           MainAxisAlignment.spaceBetween,
+                          //       crossAxisAlignment: CrossAxisAlignment.center,
+                          //       children: [
+                          //         Column(
+                          //           children: [
+                          //             SizedBox(
+                          //               height: 80,
+                          //               width: 150,
+                          //               child: team1 == null
+                          //                   ? Image.asset(
+                          //                       'assets/background/flag.png')
+                          //                   : Image.network(
+                          //                       "http://116.68.200.97:6048/images/flags/${team1.countryImage}",
+                          //                       fit: BoxFit.fitHeight,
+                          //                     ),
+                          //             ),
+                          //             const Gap(5),
+                          //             Text(
+                          //               matchInfo[4],
+                          //               style: const TextStyle(
+                          //                 fontSize: 18,
+                          //                 fontWeight: FontWeight.w600,
+                          //               ),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //         Column(
+                          //           children: [
+                          //             Text(
+                          //               "VS",
+                          //               style: TextStyle(
+                          //                 fontSize: 40,
+                          //                 color: Colors.blue.shade900,
+                          //                 fontWeight: FontWeight.w600,
+                          //               ),
+                          //             ),
+                          //             if (!isLive)
+                          //               StreamBuilder(
+                          //                 stream:
+                          //                     getMiliseconSinceEpochSteam(),
+                          //                 builder: (context, snapshot) {
+                          //                   Duration duration = startEpoch
+                          //                       .difference(snapshot.data ??
+                          //                           DateTime.now());
+                          //                   return Text(
+                          //                     "${duration.inDays} Days, \n${duration.inHours % 24} Hours,\n${duration.inMinutes % 60} Min, ${duration.inSeconds % 60} Sec",
+                          //                     textAlign: TextAlign.center,
+                          //                   );
+                          //                 },
+                          //               ),
+                          //           ],
+                          //         ),
+                          //         Column(
+                          //           crossAxisAlignment:
+                          //               CrossAxisAlignment.center,
+                          //           mainAxisAlignment:
+                          //               MainAxisAlignment.center,
+                          //           children: [
+                          //             SizedBox(
+                          //               height: 80,
+                          //               width: 150,
+                          //               child: team2 == null
+                          //                   ? Image.asset(
+                          //                       'assets/background/flag.png')
+                          //                   : Image.network(
+                          //                       "http://116.68.200.97:6048/images/flags/${team2.countryImage}",
+                          //                       fit: BoxFit.fitHeight,
+                          //                     ),
+                          //             ),
+                          //             const Gap(5),
+                          //             Text(
+                          //               matchInfo[5],
+                          //               style: const TextStyle(
+                          //                 fontSize: 18,
+                          //                 fontWeight: FontWeight.w600,
+                          //               ),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       ],
+                          //     )
+                          //   ],
+                          // ),
                         ),
                         Container(
                           margin: const EdgeInsets.all(5),
-                          height: 200,
+                          height: 100,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),

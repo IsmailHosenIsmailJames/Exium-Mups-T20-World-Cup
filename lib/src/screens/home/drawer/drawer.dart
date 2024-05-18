@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/edit_team.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/players_controller.dart';
@@ -9,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -122,8 +125,13 @@ class _MyDrawerState extends State<MyDrawer> {
             Container(
               margin: const EdgeInsets.only(left: 10, right: 10),
               child: ElevatedButton(
-                onPressed: () {
-                  Get.to(() => const WebViewLiveScore());
+                onPressed: () async {
+                  http.Response response = await http.get(
+                      Uri.parse("http://116.68.200.97:6048/api/v1/live_match"));
+                  if (response.statusCode == 200) {
+                    String url = jsonDecode(response.body)['url'];
+                    Get.to(() => WebViewLiveScore(url: url));
+                  }
                 },
                 child: const Row(
                   children: [
