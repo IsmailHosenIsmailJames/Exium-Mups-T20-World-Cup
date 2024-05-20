@@ -16,7 +16,6 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../core/init_route.dart';
-import '../../../models/players_info_model.dart';
 
 class YourTeam extends StatefulWidget {
   final bool willUpdate;

@@ -160,8 +160,8 @@ class _SignUpState extends State<SignUp> {
                         CupertinoIcons.lock,
                         color: Colors.blue.shade900,
                       ),
-                      labelText: "Pass Code",
-                      hintText: "type the pass code here...",
+                      labelText: "Territory Code",
+                      hintText: "type the territory code here...",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
                           10,
