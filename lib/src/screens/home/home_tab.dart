@@ -155,8 +155,6 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                 padding: const EdgeInsets.only(
                   left: 10,
                   right: 10,
-                  top: 100,
-                  bottom: 70,
                 ),
                 children: [
                   Row(
@@ -332,7 +330,6 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                               },
                               behavior: HitTestBehavior.translucent,
                               child: Container(
-                                height: 155,
                                 width: MediaQuery.of(context).size.width,
                                 margin: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(
@@ -411,6 +408,15 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                               ),
                               child: Column(
                                 children: [
+                                  SizedBox(
+                                    height: 290,
+                                    child: (isLoading)
+                                        ? const Center(
+                                            child: CupertinoActivityIndicator())
+                                        : WebViewWidget(
+                                            controller: controllerURL,
+                                          ),
+                                  ),
                                   GestureDetector(
                                     behavior: HitTestBehavior.translucent,
                                     onTap: () {
@@ -427,19 +433,19 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                                       height: 50,
                                       child: Row(children: [
                                         Spacer(
-                                          flex: 4,
+                                          flex: 5,
                                         ),
                                         Text(
                                           "View details",
                                           style: TextStyle(
-                                            fontSize: 24,
+                                            fontSize: 18,
                                             fontWeight: FontWeight.w600,
                                             color:
                                                 Color.fromARGB(255, 0, 50, 124),
                                           ),
                                         ),
                                         Spacer(
-                                          flex: 3,
+                                          flex: 4,
                                         ),
                                         Icon(
                                           Icons.arrow_forward_rounded,
@@ -449,15 +455,6 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                                         Gap(10)
                                       ]),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 270,
-                                    child: (isLoading)
-                                        ? const Center(
-                                            child: CupertinoActivityIndicator())
-                                        : WebViewWidget(
-                                            controller: controllerURL,
-                                          ),
                                   ),
                                 ],
                               ),

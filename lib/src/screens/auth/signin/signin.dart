@@ -20,12 +20,10 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  bool isCheaked = false;
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController passCodeController = TextEditingController();
   final key = GlobalKey<FormState>();
-  Color cheakOkColor = Colors.black;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +50,7 @@ class _SignUpState extends State<SignUp> {
                 children: [
                   Center(
                     child: Text(
-                      "Regester",
+                      "Register",
                       style: TextStyle(
                         color: Colors.blue.shade900,
                         fontSize: 70,
@@ -173,50 +171,14 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                   const SizedBox(
-                    height: 5,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isCheaked = !isCheaked;
-                      });
-                    },
-                    child: SizedBox(
-                      height: 25,
-                      child: Row(
-                        children: [
-                          Checkbox.adaptive(
-                            value: isCheaked,
-                            onChanged: (value) {
-                              setState(() {
-                                isCheaked = !isCheaked;
-                              });
-                              if (isCheaked) {
-                                cheakOkColor = Colors.black;
-                              } else {
-                                cheakOkColor = Colors.red;
-                              }
-                            },
-                          ),
-                          Text(
-                            "I agree to get SMS every day for this contest purpose.",
-                            style: TextStyle(
-                              color: cheakOkColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
+                    height: 10,
                   ),
                   SizedBox(
                     height: 40,
                     width: 540,
                     child: ElevatedButton(
                       onPressed: () async {
-                        if (key.currentState!.validate() && isCheaked) {
+                        if (key.currentState!.validate()) {
                           final http.Response response = await http.post(
                             Uri.parse(
                                 "http://116.68.200.97:6048/api/v1/register"),
@@ -239,12 +201,6 @@ class _SignUpState extends State<SignUp> {
                           } else {
                             Fluttertoast.showToast(
                                 msg: jsonDecode(response.body)["message"]);
-                          }
-                        } else {
-                          if (isCheaked == false) {
-                            setState(() {
-                              cheakOkColor = Colors.red;
-                            });
                           }
                         }
                       },

@@ -74,6 +74,24 @@ class _EditTeamState extends State<EditTeam> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10))),
             onPressed: () {
+              List<PlayerInfoModel> batsman = [];
+              List<PlayerInfoModel> allrounder = [];
+              List<PlayerInfoModel> wicketkeeper = [];
+              List<PlayerInfoModel> bowler = [];
+              for (PlayerInfoModel player
+                  in playerListControlller.selectedPlayer) {
+                if (player.role == "Batsman") {
+                  batsman.add(player);
+                } else if (player.role == "Bowler") {
+                  bowler.add(player);
+                } else if (player.role == "All-Rounder") {
+                  allrounder.add(player);
+                } else {
+                  wicketkeeper.add(player);
+                }
+              }
+              playerListControlller.selectedPlayer.value =
+                  batsman + allrounder + wicketkeeper + bowler;
               Get.to(() => YourTeam(
                     willUpdate: widget.previousTeam != null,
                   ));
@@ -192,7 +210,9 @@ class _EditTeamState extends State<EditTeam> {
                                                   );
                                                 }
                                               }
-                                              return const CircularProgressIndicator();
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
                                             },
                                           ),
                                         ),

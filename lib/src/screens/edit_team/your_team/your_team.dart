@@ -16,6 +16,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../core/init_route.dart';
+import '../../../models/players_info_model.dart';
 
 class YourTeam extends StatefulWidget {
   final bool willUpdate;
@@ -80,8 +81,11 @@ class _YourTeamState extends State<YourTeam> {
                         playerListControlller.selectedPlayer.length < 11
                     ? null
                     : () {
-                        TextEditingController teamName =
-                            TextEditingController();
+                        TextEditingController teamName = TextEditingController(
+                            text: Hive.box("info")
+                                    .get("teamName", defaultValue: null) ??
+                                "");
+
                         showDialog(
                           context: context,
                           builder: (context) {
