@@ -144,7 +144,7 @@ class _SignUpState extends State<SignUp> {
                                   height: 200,
                                   child: const Center(
                                     child: Text(
-                                      "Passcode will be provided\nby\nRadiant Colleague",
+                                      "Territory Code will be provided\nby\nRadiant Colleague",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(fontSize: 18),
                                     ),
