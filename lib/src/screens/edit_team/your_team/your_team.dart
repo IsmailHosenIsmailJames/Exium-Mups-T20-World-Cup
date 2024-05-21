@@ -8,6 +8,7 @@ import 'package:exium_mups_t20_world_cup/src/screens/edit_team/controllers/playe
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/players_list_of_country/players_list_of_country.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/players_controller.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
@@ -321,83 +322,182 @@ class _YourTeamState extends State<YourTeam> {
                               ),
                               height: 60,
                               margin: const EdgeInsets.all(5),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    height: 60,
-                                    width: 60,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(100),
-                                      child: FutureBuilder(
-                                        future: getUriImage(
-                                            "http://116.68.200.97:6048/images/players/$imageUrl"),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.hasData) {
-                                            Uint8List? data = snapshot.data;
-                                            if (data != null) {
-                                              return Image.memory(data);
-                                            } else {
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              IconButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                icon: const Icon(Icons.close),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 300,
+                                            width: 300,
+                                            child: FutureBuilder(
+                                              future: getUriImage(
+                                                  "http://116.68.200.97:6048/images/players/$imageUrl"),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.hasData) {
+                                                  Uint8List? data =
+                                                      snapshot.data;
+                                                  if (data != null) {
+                                                    return Image.memory(data);
+                                                  } else {
+                                                    return const Icon(
+                                                      FluentIcons
+                                                          .person_32_regular,
+                                                      size: 40,
+                                                      color: Colors.grey,
+                                                    );
+                                                  }
+                                                }
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.done) {
+                                                  return const Icon(
+                                                    FluentIcons
+                                                        .person_32_regular,
+                                                    size: 40,
+                                                    color: Colors.grey,
+                                                  );
+                                                }
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          const Gap(15),
+                                          Text(
+                                            playerListControlller
+                                                .selectedPlayer[index]
+                                                .playerName,
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          Text(
+                                            playerListControlller
+                                                .selectedPlayer[index].role,
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              color: Colors.grey.shade600,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const Gap(15),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 60,
+                                      width: 60,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        child: FutureBuilder(
+                                          future: getUriImage(
+                                              "http://116.68.200.97:6048/images/players/$imageUrl"),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              Uint8List? data = snapshot.data;
+                                              if (data != null) {
+                                                return Image.memory(data);
+                                              } else {
+                                                return const Icon(
+                                                  FluentIcons.person_32_regular,
+                                                  size: 40,
+                                                  color: Colors.grey,
+                                                );
+                                              }
+                                            }
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.done) {
                                               return const Icon(
                                                 FluentIcons.person_32_regular,
                                                 size: 40,
                                                 color: Colors.grey,
                                               );
                                             }
-                                          }
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.done) {
-                                            return const Icon(
-                                              FluentIcons.person_32_regular,
-                                              size: 40,
-                                              color: Colors.grey,
-                                            );
-                                          }
-                                          return const Center(
-                                              child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ));
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  const Gap(10),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        playerListControlller
-                                            .selectedPlayer[index].playerName,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w500,
+                                            return const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ));
+                                          },
                                         ),
                                       ),
-                                      Text(
-                                        playerListControlller
-                                            .selectedPlayer[index].role,
-                                        style: TextStyle(
-                                          fontSize: 17,
-                                          color: Colors.grey.shade600,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Spacer(),
-                                  IconButton(
-                                    onPressed: () {
-                                      playerListControlller.selectedPlayer
-                                          .removeAt(index);
-                                    },
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
                                     ),
-                                  ),
-                                  const Gap(10),
-                                ],
+                                    const Gap(10),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          playerListControlller
+                                              .selectedPlayer[index].playerName,
+                                          style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        Text(
+                                          playerListControlller
+                                              .selectedPlayer[index].role,
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                            color: Colors.grey.shade600,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    IconButton(
+                                      padding: const EdgeInsets.all(16),
+                                      style: IconButton.styleFrom(
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.zero)),
+                                      onPressed: () {
+                                        playerListControlller.selectedPlayer
+                                            .removeAt(index);
+                                      },
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },

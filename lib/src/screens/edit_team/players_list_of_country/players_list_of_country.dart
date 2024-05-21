@@ -207,186 +207,339 @@ class _PlayerListState extends State<PlayerList> {
                           ),
                           height: 60,
                           margin: const EdgeInsets.all(5),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                height: 60,
-                                width: 60,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(100),
-                                  child: FutureBuilder(
-                                    future: getUriImage(
-                                        "http://116.68.200.97:6048/images/players/$imageUrl"),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        Uint8List? response = snapshot.data;
-                                        if (response == null) {
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            icon: const Icon(Icons.close),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 300,
+                                        width: 300,
+                                        child: FutureBuilder(
+                                          future: getUriImage(
+                                              "http://116.68.200.97:6048/images/players/$imageUrl"),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              Uint8List? data = snapshot.data;
+                                              if (data != null) {
+                                                return Image.memory(data);
+                                              } else {
+                                                return const Icon(
+                                                  FluentIcons.person_32_regular,
+                                                  size: 40,
+                                                  color: Colors.grey,
+                                                );
+                                              }
+                                            }
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.done) {
+                                              return const Icon(
+                                                FluentIcons.person_32_regular,
+                                                size: 40,
+                                                color: Colors.grey,
+                                              );
+                                            }
+                                            return const Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      const Gap(15),
+                                      Text(
+                                        playerListControlller
+                                            .listOfPlayers[index].playerName,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Text(
+                                        playerListControlller
+                                            .listOfPlayers[index].role,
+                                        style: TextStyle(
+                                          fontSize: 17,
+                                          color: Colors.grey.shade600,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const Gap(15),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  height: 60,
+                                  width: 60,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(100),
+                                    child: FutureBuilder(
+                                      future: getUriImage(
+                                          "http://116.68.200.97:6048/images/players/$imageUrl"),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          Uint8List? response = snapshot.data;
+                                          if (response == null) {
+                                            return const Icon(
+                                              FluentIcons.person_32_regular,
+                                              size: 40,
+                                              color: Colors.grey,
+                                            );
+                                          } else {
+                                            return Image.memory(response);
+                                          }
+                                        }
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
                                           return const Icon(
                                             FluentIcons.person_32_regular,
                                             size: 40,
                                             color: Colors.grey,
                                           );
-                                        } else {
-                                          return Image.memory(response);
                                         }
-                                      }
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.done) {
-                                        return const Icon(
-                                          FluentIcons.person_32_regular,
-                                          size: 40,
-                                          color: Colors.grey,
-                                        );
-                                      }
-                                      return const Center(
-                                          child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ));
-                                    },
+                                        return const Center(
+                                            child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ));
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const Gap(10),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    playerListControlller
-                                        .listOfPlayers[index].playerName,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
+                                const Gap(10),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      playerListControlller
+                                          .listOfPlayers[index].playerName,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    playerListControlller
-                                        .listOfPlayers[index].role,
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      color: Colors.grey.shade600,
-                                      fontWeight: FontWeight.w500,
+                                    Text(
+                                      playerListControlller
+                                          .listOfPlayers[index].role,
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        color: Colors.grey.shade600,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Obx(
-                                () {
-                                  bool isSelected = false;
-                                  int indexOfSelectedPlayer = -1;
-                                  for (int i = 0;
-                                      i <
+                                  ],
+                                ),
+                                const Spacer(),
+                                Obx(
+                                  () {
+                                    bool isSelected = false;
+                                    int indexOfSelectedPlayer = -1;
+                                    for (int i = 0;
+                                        i <
+                                            playerListControlller
+                                                .selectedPlayer.length;
+                                        i++) {
+                                      if (playerListControlller
+                                              .selectedPlayer[i].playerCode ==
                                           playerListControlller
-                                              .selectedPlayer.length;
-                                      i++) {
-                                    if (playerListControlller
-                                            .selectedPlayer[i].playerCode ==
-                                        playerListControlller
-                                            .listOfPlayers[index].playerCode) {
-                                      isSelected = true;
-                                      indexOfSelectedPlayer = i;
-                                      break;
+                                              .listOfPlayers[index]
+                                              .playerCode) {
+                                        isSelected = true;
+                                        indexOfSelectedPlayer = i;
+                                        break;
+                                      }
                                     }
-                                  }
-                                  return Checkbox.adaptive(
-                                    value: isSelected,
-                                    onChanged: playerListControlller
+                                    return playerListControlller
                                                     .selectedPlayer.length >=
                                                 11 &&
                                             isSelected == false
-                                        ? null
-                                        : (value) {
-                                            if (isSelected) {
-                                              playerListControlller
-                                                  .selectedPlayer
-                                                  .removeAt(
-                                                      indexOfSelectedPlayer);
-                                            } else {
-                                              String role =
-                                                  playerListControlller
-                                                      .listOfPlayers[index]
-                                                      .role;
-                                              int alreadySelectedSameRole = 0;
-                                              for (int i = 0;
-                                                  i <
-                                                      playerListControlller
-                                                          .selectedPlayer
-                                                          .length;
-                                                  i++) {
-                                                if (role ==
-                                                    playerListControlller
-                                                        .selectedPlayer[i]
-                                                        .role) {
-                                                  alreadySelectedSameRole++;
-                                                }
-                                              }
-                                              if (PlayesrMaxMinRoules
-                                                      .max[role]! >
-                                                  alreadySelectedSameRole) {
-                                                playerListControlller
-                                                    .selectedPlayer
-                                                    .add(playerListControlller
-                                                        .listOfPlayers[index]);
-                                              } else {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      AlertDialog(
-                                                    title: Text(
-                                                        "Maximum ${PlayesrMaxMinRoules.max[role]} $role is allowed"),
-                                                    content: const Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
+                                        ? IconButton(
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => Dialog(
+                                                  child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.90,
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 20,
+                                                            bottom: 20,
+                                                            right: 20),
+                                                    child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
-                                                              .start,
+                                                              .center,
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
-                                                              .start,
+                                                              .center,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
                                                       children: [
-                                                        Text(
-                                                          "Here are the roules :",
-                                                          style: TextStyle(
-                                                              fontSize: 16,
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            IconButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              icon: const Icon(
+                                                                  Icons.close),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const Gap(30),
+                                                        const Center(
+                                                          child: Text(
+                                                            "Your team member is full with 11 players. Please remove anyone from your team list then try again",
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                                fontSize: 18),
+                                                          ),
+                                                        ),
+                                                        const Gap(30),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            icon: const Icon(
+                                              Icons.check_box_outline_blank,
+                                              color: Colors.grey,
+                                            ),
+                                          )
+                                        : Checkbox.adaptive(
+                                            splashRadius: 40,
+                                            value: isSelected,
+                                            onChanged: (value) {
+                                              if (isSelected) {
+                                                playerListControlller
+                                                    .selectedPlayer
+                                                    .removeAt(
+                                                        indexOfSelectedPlayer);
+                                              } else {
+                                                String role =
+                                                    playerListControlller
+                                                        .listOfPlayers[index]
+                                                        .role;
+                                                int alreadySelectedSameRole = 0;
+                                                for (int i = 0;
+                                                    i <
+                                                        playerListControlller
+                                                            .selectedPlayer
+                                                            .length;
+                                                    i++) {
+                                                  if (role ==
+                                                      playerListControlller
+                                                          .selectedPlayer[i]
+                                                          .role) {
+                                                    alreadySelectedSameRole++;
+                                                  }
+                                                }
+                                                if (PlayesrMaxMinRoules
+                                                        .max[role]! >
+                                                    alreadySelectedSameRole) {
+                                                  playerListControlller
+                                                      .selectedPlayer
+                                                      .add(playerListControlller
+                                                              .listOfPlayers[
+                                                          index]);
+                                                } else {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialog(
+                                                      title: Text(
+                                                          "Maximum ${PlayesrMaxMinRoules.max[role]} $role is allowed"),
+                                                      content: const Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            "Here are the roules :",
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          Divider(
+                                                            height: 2,
+                                                          ),
+                                                          Text(
+                                                            "1. Batsman Minimum 2 & Maximum 4\n2. Bowler Minimum 2 & Maximum 4\n3. All-Rounder Minimum 2 & Maximum 4\n4. Wicket Keeper Minimum 1 & Maximum 3",
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                            "Got it",
+                                                            style: TextStyle(
+                                                              fontSize: 18,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        Divider(
-                                                          height: 2,
-                                                        ),
-                                                        Text(
-                                                          "1. Batsman Minimum 2 & Maximum 4\n2. Bowler Minimum 2 & Maximum 4\n3. All-Rounder Minimum 2 & Maximum 4\n4. Wicket Keeper Minimum 1 & Maximum 3",
+                                                                      .bold,
+                                                            ),
+                                                          ),
                                                         ),
                                                       ],
                                                     ),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                          "Got it",
-                                                          style: TextStyle(
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
+                                                  );
+                                                }
                                               }
-                                            }
-                                          },
-                                  );
-                                },
-                              ),
-                              const Gap(10),
-                            ],
+                                            },
+                                          );
+                                  },
+                                ),
+                                const Gap(10),
+                              ],
+                            ),
                           ),
                         );
                       },
