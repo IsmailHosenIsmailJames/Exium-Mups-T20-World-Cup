@@ -177,6 +177,10 @@ class _EditTeamState extends State<EditTeam> {
                                   child: Container(
                                     margin: const EdgeInsets.all(5),
                                     child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Container(
                                           height: 80,

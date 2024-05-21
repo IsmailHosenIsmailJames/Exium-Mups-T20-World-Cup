@@ -603,113 +603,254 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
 
   Widget buildCardOfPlayers(PlayerInfoModel player) {
     return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 120,
-            width: 120,
-            child: FutureBuilder(
-              future: getUriImage(
-                  "http://116.68.200.97:6048/images/players/${player.playerImage}"),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  Uint8List? response = snapshot.data;
-                  if (response == null) {
-                    return const Icon(
-                      FluentIcons.person_32_regular,
-                      size: 40,
-                      color: Colors.black,
-                    );
-                  } else {
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) => Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 200,
+                    width: 200,
+                    child: FutureBuilder(
+                      future: getUriImage(
+                        "http://116.68.200.97:6048/images/players/${player.playerImage}",
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          Uint8List? data = snapshot.data;
+                          if (data != null) {
+                            return Image.memory(data);
+                          } else {
+                            return const Icon(
+                              FluentIcons.person_32_regular,
+                              size: 40,
+                              color: Colors.grey,
+                            );
+                          }
+                        }
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return const Icon(
+                            FluentIcons.person_32_regular,
+                            size: 40,
+                            color: Colors.grey,
+                          );
+                        }
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const Gap(5),
+                  const Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Spacer(),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            player.playerName,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            player.role,
+                            style: TextStyle(
+                              fontSize: 17,
+                              color: Colors.grey.shade600,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.all(5),
+                            height: 60,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.5),
+                              ),
+                            ),
+                            child: FutureBuilder(
+                              future: getUriImage(
+                                  "http://116.68.200.97:6048/images/flags/${player.countryImage}"),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  Uint8List? data = snapshot.data;
+                                  if (data == null) {
+                                    return const Icon(Icons.error);
+                                  } else {
+                                    return Image.memory(data);
+                                  }
+                                }
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  return Image.asset(
+                                    "assets/background/flag.png",
+                                    fit: BoxFit.fitHeight,
+                                  );
+                                }
+                                return const CircularProgressIndicator();
+                              },
+                            ),
+                          ),
+                          Text(
+                            player.countryName,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Gap(5),
+                    ],
+                  ),
+                  const Gap(15),
+                ],
+              ),
+            ),
+          );
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 120,
+              width: 120,
+              child: FutureBuilder(
+                future: getUriImage(
+                    "http://116.68.200.97:6048/images/players/${player.playerImage}"),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    Uint8List? response = snapshot.data;
+                    if (response == null) {
+                      return const Icon(
+                        FluentIcons.person_32_regular,
+                        size: 40,
+                        color: Colors.black,
+                      );
+                    } else {
+                      return Container(
+                        padding: const EdgeInsets.all(2),
+                        margin: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                            image: MemoryImage(response),
+                            fit: BoxFit.fitHeight,
+                          ),
+                          color: const Color.fromARGB(255, 41, 141, 255)
+                              .withOpacity(0.2),
+                        ),
+                        alignment: Alignment.bottomRight,
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white.withOpacity(0.7)),
+                          child: Text(
+                            "${player.totalPoint ?? 0}",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 0, 56, 141),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                  }
+                  if (snapshot.connectionState == ConnectionState.done) {
                     return Container(
                       padding: const EdgeInsets.all(2),
                       margin: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          image: MemoryImage(response),
-                          fit: BoxFit.fitHeight,
-                        ),
                         color: const Color.fromARGB(255, 41, 141, 255)
                             .withOpacity(0.2),
                       ),
-                      alignment: Alignment.bottomRight,
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white.withOpacity(0.7)),
-                        child: Text(
-                          "${player.totalPoint ?? 0}",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 0, 56, 141),
+                      child: Column(
+                        children: [
+                          const Icon(
+                            FluentIcons.person_32_regular,
+                            size: 40,
+                            color: Colors.black,
                           ),
-                        ),
+                          Row(
+                            children: [
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white.withOpacity(0.7)),
+                                child: Text(
+                                  "${player.totalPoint ?? 0}",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 0, 56, 141),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     );
                   }
-                }
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Container(
-                    padding: const EdgeInsets.all(2),
-                    margin: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromARGB(255, 41, 141, 255)
-                          .withOpacity(0.2),
-                    ),
-                    child: Column(
-                      children: [
-                        const Icon(
-                          FluentIcons.person_32_regular,
-                          size: 40,
-                          color: Colors.black,
-                        ),
-                        Row(
-                          children: [
-                            const Spacer(),
-                            Container(
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white.withOpacity(0.7)),
-                              child: Text(
-                                "${player.totalPoint ?? 0}",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 0, 56, 141),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                return const Center(
-                    child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                ));
-              },
-            ),
-          ),
-          Center(
-            child: Text(
-              player.playerName,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ));
+                },
               ),
             ),
-          ),
-        ],
+            Center(
+              child: Text(
+                player.playerName,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
