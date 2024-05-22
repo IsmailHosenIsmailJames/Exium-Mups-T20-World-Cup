@@ -223,9 +223,11 @@ class _EditTeamState extends State<EditTeam> {
                                         Text(
                                           controller.contryListResult[index]
                                               .countryName,
+                                          textAlign: TextAlign.center,
                                           style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500),
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         )
                                       ],
                                     ),

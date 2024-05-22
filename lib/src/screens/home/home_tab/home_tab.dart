@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-import 'package:exium_mups_t20_world_cup/src/screens/home/experiment/fixtures_excel.dart';
-import 'package:exium_mups_t20_world_cup/src/screens/home/experiment/web_view_live_score.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/live_web_score/web_view_live_score.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -13,11 +12,10 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../core/get_uri_images.dart';
-import '../../models/country_list_model.dart';
-import '../../models/players_info_model.dart';
-import 'controllers/players_controller.dart';
-import 'controllers/user_info_controller.dart';
+import '../../../core/get_uri_images.dart';
+import '../../../models/players_info_model.dart';
+import '../controllers/players_controller.dart';
+import '../controllers/user_info_controller.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -28,7 +26,6 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   bool isPlayerList = false;
-  List<String> listOfRows = csv.split("\n");
   final userInformationController = Get.put(UserInfoControllerGetx());
   List countryList = [];
 
@@ -264,59 +261,6 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                   return StreamBuilder(
                     stream: getTimeStream(),
                     builder: (context, snapshot) {
-                      List<String> matchInfo = [];
-
-                      List<Result> contryListResult = [];
-
-                      for (int i = 0; i < countryList.length; i++) {
-                        contryListResult.add(Result.fromMap(countryList[i]));
-                      }
-
-                      for (int index = 0; index < listOfRows.length; index++) {
-                        List<String> listOfCellInRow =
-                            listOfRows[index].split(",");
-                        int day = int.parse(listOfCellInRow[1]);
-                        int month = int.parse(listOfCellInRow[2]);
-                        int year = int.parse(listOfCellInRow[3]);
-                        int hour = int.parse(
-                            listOfCellInRow[listOfCellInRow.length - 3]);
-                        int min = int.parse(
-                            listOfCellInRow[listOfCellInRow.length - 2]);
-                        if (listOfCellInRow[listOfCellInRow.length - 1] ==
-                            'PM') {
-                          hour += 12;
-                        }
-                        DateTime matchStartTime =
-                            DateTime(year, month, day, hour, min);
-                        DateTime matchEndTime =
-                            DateTime(year, month, day, hour + 4, min);
-                        int epocOfMatchSart =
-                            matchStartTime.millisecondsSinceEpoch;
-
-                        int epocOfMatchEnd =
-                            matchEndTime.millisecondsSinceEpoch;
-                        int nowEpoc = DateTime.now().millisecondsSinceEpoch;
-                        if (nowEpoc > epocOfMatchSart &&
-                            nowEpoc < epocOfMatchEnd) {
-                          matchInfo = listOfCellInRow;
-
-                          break;
-                        } else if (nowEpoc < epocOfMatchSart) {
-                          matchInfo = listOfCellInRow;
-                          break;
-                        }
-                      }
-
-                      String countryName1 = matchInfo[4];
-                      String countryName2 = matchInfo[5];
-                      for (var x in countryList) {
-                        Result e = Result.fromMap(x);
-                        if (e.countryName.toLowerCase().trim() ==
-                            countryName1.toLowerCase().trim()) {}
-                        if (e.countryName.toLowerCase().trim() ==
-                            countryName2.toLowerCase().trim()) {}
-                      }
-
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

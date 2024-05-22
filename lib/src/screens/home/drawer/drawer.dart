@@ -4,7 +4,7 @@ import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/edit_team.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/players_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
-import 'package:exium_mups_t20_world_cup/src/screens/home/experiment/web_view_live_score.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/live_web_score/web_view_live_score.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';

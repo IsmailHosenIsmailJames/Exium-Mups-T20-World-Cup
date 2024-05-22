@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/drawer/drawer.dart';
-import 'package:exium_mups_t20_world_cup/src/screens/home/fixtures.dart';
-import 'package:exium_mups_t20_world_cup/src/screens/home/home_tab.dart';
-import 'package:exium_mups_t20_world_cup/src/screens/home/standings.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/fixtures/fixtures.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/home_tab/home_tab.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/leaderboard/leaderboard_tab.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/standings/standings.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int selectedPageIndex = 0;
+  int selectedPageIndex = 3;
   final userInfoControllerGetx = Get.put(UserInfoControllerGetx());
 
   int sec = DateTime.now().millisecondsSinceEpoch;
@@ -64,24 +65,13 @@ class _HomePageState extends State<HomePage> {
             Text(Hive.box("info").get("teamName")),
             const Spacer(),
             CircleAvatar(
-              radius: 25,
+              radius: 23,
               backgroundColor: Colors.blue.shade900.withOpacity(0.3),
               backgroundImage: const NetworkImage(
                 "https://upload.wikimedia.org/wikipedia/commons/9/92/Cricket-hit-wall-sticker1.png",
               ),
             ),
             const Gap(10),
-            IconButton(
-              onPressed: () async {
-                if (DateTime.now().millisecondsSinceEpoch - sec > 10000) {
-                  loadPlayersData();
-                  sec = DateTime.now().millisecondsSinceEpoch;
-                }
-              },
-              icon: const Icon(
-                Icons.replay_outlined,
-              ),
-            ),
           ],
         ),
         // toolbarHeight: 120,
@@ -95,11 +85,7 @@ class _HomePageState extends State<HomePage> {
         ),
         const Fixtures(),
         const Standings(),
-        Center(
-          child: Container(
-            color: Colors.white.withOpacity(0.3),
-          ),
-        ),
+        const LeaderboardTab(),
       ][selectedPageIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
