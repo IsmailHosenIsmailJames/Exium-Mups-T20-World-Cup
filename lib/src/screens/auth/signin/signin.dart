@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/auth/login/login.dart';
@@ -280,6 +281,9 @@ class _SignUpState extends State<SignUp> {
                           final http.Response response = await http.post(
                             Uri.parse(
                                 "http://116.68.200.97:6048/api/v1/register"),
+                            headers: {
+                              HttpHeaders.contentTypeHeader: "application/json"
+                            },
                             body: jsonEncode(
                               {
                                 "full_name": nameController.text.trim(),
