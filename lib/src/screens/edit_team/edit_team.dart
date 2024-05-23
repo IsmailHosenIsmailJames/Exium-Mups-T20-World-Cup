@@ -215,8 +215,9 @@ class _EditTeamState extends State<EditTeam> {
                                                 }
                                               }
                                               return const Center(
-                                                  child:
-                                                      CircularProgressIndicator());
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
                                             },
                                           ),
                                         ),

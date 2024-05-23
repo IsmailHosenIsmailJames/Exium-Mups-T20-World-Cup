@@ -24,6 +24,8 @@ class _SignUpState extends State<SignUp> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController passCodeController = TextEditingController();
   final key = GlobalKey<FormState>();
+  Color errorIndecatpr = Colors.black;
+  int accountTypeFlag = -1;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +43,7 @@ class _SignUpState extends State<SignUp> {
                 ],
               ),
             ),
-            height: 600,
+            height: 630,
             width: MediaQuery.of(context).size.width * 0.92,
             child: Form(
               key: key,
@@ -173,20 +175,119 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(
                     height: 10,
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Account type :",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: errorIndecatpr,
+                        ),
+                      ),
+                      GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          setState(() {
+                            accountTypeFlag = 0;
+                            errorIndecatpr = Colors.black;
+                          });
+                        },
+                        child: Container(
+                          height: 35,
+                          width: MediaQuery.of(context).size.width * 0.30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Checkbox.adaptive(
+                                value: accountTypeFlag == 0,
+                                onChanged: (value) {
+                                  setState(() {
+                                    accountTypeFlag = 0;
+                                    errorIndecatpr = Colors.black;
+                                  });
+                                },
+                              ),
+                              const Text(
+                                "Doctor",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            accountTypeFlag = 1;
+                            errorIndecatpr = Colors.black;
+                          });
+                        },
+                        behavior: HitTestBehavior.translucent,
+                        child: Container(
+                          height: 35,
+                          width: MediaQuery.of(context).size.width * 0.30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Checkbox.adaptive(
+                                value: accountTypeFlag == 1,
+                                onChanged: (value) {
+                                  setState(() {
+                                    accountTypeFlag = 1;
+                                    errorIndecatpr = Colors.black;
+                                  });
+                                },
+                              ),
+                              const Text(
+                                "CHQ",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   SizedBox(
                     height: 40,
                     width: 540,
                     child: ElevatedButton(
                       onPressed: () async {
-                        if (key.currentState!.validate()) {
+                        if (key.currentState!.validate() &&
+                            accountTypeFlag != -1) {
                           final http.Response response = await http.post(
                             Uri.parse(
                                 "http://116.68.200.97:6048/api/v1/register"),
-                            body: {
-                              "full_name": nameController.text,
-                              "mobile_number": phoneController.text,
-                              "pin_number": passCodeController.text,
-                            },
+                            body: jsonEncode(
+                              {
+                                "full_name": nameController.text.trim(),
+                                "mobile_number": phoneController.text,
+                                "pin_number": passCodeController.text,
+                                "user_type": accountTypeFlag,
+                              },
+                            ),
                           );
                           if (response.statusCode == 200) {
                             Fluttertoast.showToast(
@@ -202,6 +303,10 @@ class _SignUpState extends State<SignUp> {
                             Fluttertoast.showToast(
                                 msg: jsonDecode(response.body)["message"]);
                           }
+                        } else {
+                          setState(() {
+                            errorIndecatpr = Colors.red;
+                          });
                         }
                       },
                       child: const Row(

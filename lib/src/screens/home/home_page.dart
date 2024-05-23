@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int selectedPageIndex = 3;
+  int selectedPageIndex = 0;
   final userInfoControllerGetx = Get.put(UserInfoControllerGetx());
 
   int sec = DateTime.now().millisecondsSinceEpoch;
