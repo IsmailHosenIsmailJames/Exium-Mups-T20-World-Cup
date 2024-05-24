@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
-import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/web_state_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/drawer/drawer.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/fixtures/fixtures.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/home_tab/home_tab.dart';
@@ -17,7 +16,6 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:http/http.dart' as http;
-import 'package:webview_flutter/webview_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -103,75 +101,9 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  WebViewController standingWebView = WebViewController();
-  final webStateController = Get.put(WebStateController());
-  WebViewController fixturesWebView = WebViewController();
-
   @override
   void initState() {
-    standingWebView
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..setNavigationDelegate(NavigationDelegate(
-        onProgress: (progress) {},
-        onPageStarted: (String url) {},
-        onPageFinished: (String url) {
-          standingWebView.runJavaScript('''
-        var element = document.querySelector('.Header_header__Mklic');
-      if (element) {
-        element.style.display = 'none';
-      }
-      var element = document.querySelector('.MustHead_must-head__6uGMB');
-      if (element) {
-        element.style.display = 'none';
-      }
-         var element = document.querySelector('.Footer_footer__cVJRj');
-      if (element) {
-        element.style.display = 'none';
-      }
-    ''');
-          webStateController.standingLoading.value = false;
-          setState(() {});
-        },
-        onWebResourceError: (WebResourceError error) {
-          //Things to do when the page has error when loading
-        },
-      ))
-      ..loadRequest(Uri.parse(
-          "https://www.icc-cricket.com/tournaments/t20cricketworldcup/standings"));
-
-    fixturesWebView
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..setNavigationDelegate(NavigationDelegate(
-        onProgress: (progress) {},
-        onPageStarted: (String url) {},
-        onPageFinished: (String url) {
-          fixturesWebView.runJavaScript('''
-      var element = document.querySelector('.Header_header__Mklic');
-      if (element) {
-        element.style.display = 'none';
-      }
-      var element = document.querySelector('.MustHead_must-head__6uGMB');
-      if (element) {
-        element.style.display = 'none';
-      }
-         var element = document.querySelector('.Footer_footer__cVJRj');
-      if (element) {
-        element.style.display = 'none';
-      }
-    ''');
-          webStateController.fixturesLoading.value = false;
-          setState(() {});
-        },
-        onWebResourceError: (WebResourceError error) {
-          //Things to do when the page has error when loading
-        },
-      ))
-      ..loadRequest(Uri.parse("https://www.icc-cricket.com/fixtures-results"));
-
     loadPlayersData();
-
     super.initState();
   }
 
@@ -202,10 +134,8 @@ class _HomePageState extends State<HomePage> {
           color: Colors.white.withOpacity(0.35),
           child: const HomeTab(),
         ),
-        Fixtures(controller: fixturesWebView),
-        Standings(
-          controller: standingWebView,
-        ),
+        const Fixtures(),
+        const Standings(),
         const LeaderboardTab(),
       ][selectedPageIndex],
       bottomNavigationBar: Container(
