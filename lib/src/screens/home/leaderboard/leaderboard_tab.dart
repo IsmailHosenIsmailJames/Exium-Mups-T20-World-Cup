@@ -60,7 +60,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> {
                       child: Text(
                         "Rank",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -70,9 +70,9 @@ class _LeaderboardTabState extends State<LeaderboardTab> {
                   SizedBox(
                     width: 65,
                     child: Text(
-                      "Profile",
+                      "Image",
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -80,7 +80,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> {
                   Text(
                     "Name & Role",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -88,7 +88,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> {
                   Text(
                     "Points",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -98,7 +98,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> {
               const Divider(),
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.only(left: 5, right: 5, bottom: 20),
+                  padding: const EdgeInsets.only(bottom: 20),
                   itemCount: listOfRanking.length,
                   itemBuilder: (context, index) {
                     return Container(
@@ -190,19 +190,23 @@ class _LeaderboardTabState extends State<LeaderboardTab> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              FittedBox(
-                                child: Text(
-                                  listOfRanking[index].playerName,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w400,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.49,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    listOfRanking[index].playerName,
+                                    style: const TextStyle(
+                                      fontSize: 19,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
                                 ),
                               ),
                               Text(
                                 listOfRanking[index].role,
                                 style: const TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),

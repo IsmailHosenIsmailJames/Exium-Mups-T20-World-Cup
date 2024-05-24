@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/auth/login/login.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
@@ -27,6 +29,88 @@ class _SignUpState extends State<SignUp> {
   final key = GlobalKey<FormState>();
   Color errorIndecatpr = Colors.black;
   int accountTypeFlag = -1;
+
+  void signUp() async {
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+
+    bool isNetworkActive =
+        connectivityResult.contains(ConnectivityResult.mobile) ||
+            connectivityResult.contains(ConnectivityResult.wifi) ||
+            connectivityResult.contains(ConnectivityResult.ethernet);
+    if (key.currentState!.validate() && accountTypeFlag != -1) {
+      if (isNetworkActive) {
+        final http.Response response = await http.post(
+          Uri.parse("http://116.68.200.97:6048/api/v1/register"),
+          headers: {HttpHeaders.contentTypeHeader: "application/json"},
+          body: jsonEncode(
+            {
+              "full_name": nameController.text.trim(),
+              "mobile_number": phoneController.text,
+              "pin_number": passCodeController.text,
+              "user_type": accountTypeFlag,
+            },
+          ),
+        );
+        if (response.statusCode == 200) {
+          Fluttertoast.showToast(msg: jsonDecode(response.body)["message"]);
+          final userModelData = User.fromMap(jsonDecode(response.body)['user']);
+          final box = Hive.box("info");
+          await box.put("userInfo", userModelData.toJson());
+          Get.offAll(
+            () => const InitRoutes(),
+          );
+        } else {
+          Fluttertoast.showToast(msg: jsonDecode(response.body)["message"]);
+        }
+      } else {
+        showDialog(
+          // ignore: use_build_context_synchronously
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text("No internet connection!"),
+              content: const Text(
+                "This app can run when internet connection is active. Please cheak your internet connection and then try again",
+              ),
+              actions: [
+                OutlinedButton(
+                  onPressed: () {
+                    SystemNavigator.pop();
+                  },
+                  child: const Text(
+                    "Quit",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    signUp();
+                  },
+                  child: const Text(
+                    "Try again",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      setState(() {
+        errorIndecatpr = Colors.red;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,6 +186,7 @@ class _SignUpState extends State<SignUp> {
                         return null;
                       }
                     },
+                    keyboardType: TextInputType.phone,
                     maxLength: 11,
                     decoration: InputDecoration(
                       prefixIcon: Icon(
@@ -117,6 +202,9 @@ class _SignUpState extends State<SignUp> {
                         borderSide: const BorderSide(width: 2),
                       ),
                     ),
+                  ),
+                  SizedBox(
+                    height: 5,
                   ),
                   TextFormField(
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -275,43 +363,8 @@ class _SignUpState extends State<SignUp> {
                     height: 40,
                     width: 540,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        if (key.currentState!.validate() &&
-                            accountTypeFlag != -1) {
-                          final http.Response response = await http.post(
-                            Uri.parse(
-                                "http://116.68.200.97:6048/api/v1/register"),
-                            headers: {
-                              HttpHeaders.contentTypeHeader: "application/json"
-                            },
-                            body: jsonEncode(
-                              {
-                                "full_name": nameController.text.trim(),
-                                "mobile_number": phoneController.text,
-                                "pin_number": passCodeController.text,
-                                "user_type": accountTypeFlag,
-                              },
-                            ),
-                          );
-                          if (response.statusCode == 200) {
-                            Fluttertoast.showToast(
-                                msg: jsonDecode(response.body)["message"]);
-                            final userModelData =
-                                User.fromMap(jsonDecode(response.body)['user']);
-                            final box = Hive.box("info");
-                            await box.put("userInfo", userModelData.toJson());
-                            Get.offAll(
-                              () => const InitRoutes(),
-                            );
-                          } else {
-                            Fluttertoast.showToast(
-                                msg: jsonDecode(response.body)["message"]);
-                          }
-                        } else {
-                          setState(() {
-                            errorIndecatpr = Colors.red;
-                          });
-                        }
+                      onPressed: () {
+                        signUp();
                       },
                       child: const Row(
                         children: [

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:exium_mups_t20_world_cup/src/core/get_uri_images.dart';
 import 'package:exium_mups_t20_world_cup/src/models/country_list_model.dart';
 import 'package:exium_mups_t20_world_cup/src/models/players_info_model.dart';
@@ -9,6 +10,7 @@ import 'package:exium_mups_t20_world_cup/src/screens/edit_team/controllers/edit_
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/players_list_of_country/players_list_of_country.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/edit_team/your_team/your_team.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
@@ -37,25 +39,74 @@ class _EditTeamState extends State<EditTeam> {
   }
 
   void loadCountryList() async {
-    try {
-      http.Response response = await http
-          .get(Uri.parse("http://116.68.200.97:6048/api/v1/countries"));
-      if (response.statusCode == 200) {
-        await Hive.box("info").put("country", response.body);
-        List countryList = List.from(jsonDecode(response.body)['results']);
-        for (int i = 0; i < countryList.length; i++) {
-          editTeamController.contryListResult
-              .add(Result.fromMap(countryList[i]));
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+
+    bool isNetworkActive =
+        connectivityResult.contains(ConnectivityResult.mobile) ||
+            connectivityResult.contains(ConnectivityResult.wifi) ||
+            connectivityResult.contains(ConnectivityResult.ethernet);
+    if (isNetworkActive) {
+      try {
+        http.Response response = await http
+            .get(Uri.parse("http://116.68.200.97:6048/api/v1/countries"));
+        if (response.statusCode == 200) {
+          await Hive.box("info").put("country", response.body);
+          List countryList = List.from(jsonDecode(response.body)['results']);
+          for (int i = 0; i < countryList.length; i++) {
+            editTeamController.contryListResult
+                .add(Result.fromMap(countryList[i]));
+          }
+          editTeamController.isLoading.value = false;
+        } else {
+          editTeamController.errorMessage.value =
+              jsonDecode(response.body)['message'];
+          editTeamController.isLoading.value = false;
         }
+      } catch (e) {
         editTeamController.isLoading.value = false;
-      } else {
-        editTeamController.errorMessage.value =
-            jsonDecode(response.body)['message'];
-        editTeamController.isLoading.value = false;
+        editTeamController.errorMessage.value = e.toString();
       }
-    } catch (e) {
-      editTeamController.isLoading.value = false;
-      editTeamController.errorMessage.value = e.toString();
+    } else {
+      showDialog(
+        // ignore: use_build_context_synchronously
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("No internet connection!"),
+            content: const Text(
+              "This app can run when internet connection is active. Please cheak your internet connection and then try again",
+            ),
+            actions: [
+              OutlinedButton(
+                onPressed: () {
+                  SystemNavigator.pop();
+                },
+                child: const Text(
+                  "Quit",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  loadCountryList();
+                },
+                child: const Text(
+                  "Try again",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 

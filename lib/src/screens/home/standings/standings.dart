@@ -1,61 +1,30 @@
+import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/web_state_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class Standings extends StatefulWidget {
-  const Standings({super.key});
+  final WebViewController controller;
+  const Standings({super.key, required this.controller});
 
   @override
   State<Standings> createState() => _StandingsState();
 }
 
 class _StandingsState extends State<Standings> {
-  final controller = WebViewController();
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    controller
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..setNavigationDelegate(NavigationDelegate(
-        onProgress: (progress) {},
-        onPageStarted: (String url) {},
-        onPageFinished: (String url) {
-          controller.runJavaScript('''
-        var element = document.querySelector('.Header_header__Mklic');
-      if (element) {
-        element.style.display = 'none';
-      }
-      var element = document.querySelector('.MustHead_must-head__6uGMB');
-      if (element) {
-        element.style.display = 'none';
-      }
-         var element = document.querySelector('.Footer_footer__cVJRj');
-      if (element) {
-        element.style.display = 'none';
-      }
-    ''');
-          isLoading = false;
-          setState(() {});
-        },
-        onWebResourceError: (WebResourceError error) {
-          //Things to do when the page has error when loading
-        },
-      ))
-      ..loadRequest(Uri.parse(
-          "https://www.icc-cricket.com/tournaments/t20cricketworldcup/standings"));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: (isLoading)
-          ? const Center(child: CupertinoActivityIndicator())
-          : WebViewWidget(
-              controller: controller,
-            ),
+      body: GetX<WebStateController>(
+        builder: (controller) {
+          return (controller.standingLoading.value)
+              ? const Center(child: CupertinoActivityIndicator())
+              : WebViewWidget(
+                  controller: widget.controller,
+                );
+        },
+      ),
     );
   }
 }

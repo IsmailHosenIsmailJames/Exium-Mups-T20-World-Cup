@@ -195,7 +195,7 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                   const Gap(10),
                   const Center(
                     child: Text(
-                      "Batsman",
+                      "All Rounder",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -210,20 +210,22 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: allrounder,
                   ),
-                  const Gap(10),
-                  const Center(
-                    child: Text(
-                      "Wicket Keeper",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                  if (wicketkeeper.isNotEmpty) const Gap(10),
+                  if (wicketkeeper.isNotEmpty)
+                    const Center(
+                      child: Text(
+                        "Wicket Keeper",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  const Divider(
-                    height: 2,
-                    color: Colors.black,
-                  ),
+                  if (wicketkeeper.isNotEmpty)
+                    const Divider(
+                      height: 2,
+                      color: Colors.black,
+                    ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: wicketkeeper,

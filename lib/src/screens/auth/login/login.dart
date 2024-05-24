@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:exium_mups_t20_world_cup/src/core/init_route.dart';
 import 'package:exium_mups_t20_world_cup/src/models/success_login_responce.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/auth/signin/signin.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +21,103 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController numberController = TextEditingController();
   final key = GlobalKey<FormState>();
+  void login() async {
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+
+    bool isNetworkActive =
+        connectivityResult.contains(ConnectivityResult.mobile) ||
+            connectivityResult.contains(ConnectivityResult.wifi) ||
+            connectivityResult.contains(ConnectivityResult.ethernet);
+    if (key.currentState!.validate()) {
+      if (isNetworkActive) {
+        showModalBottomSheet(
+          // ignore: use_build_context_synchronously
+          context: context,
+          builder: (context) => Center(
+            child: CircularProgressIndicator(
+              color: Colors.blue.shade800,
+            ),
+          ),
+        );
+        http.Response response = await http.post(
+          Uri.parse(
+            "http://116.68.200.97:6048/api/v1/login",
+          ),
+          body: {"mobile_number": numberController.text},
+        );
+        if (response.statusCode == 200) {
+          Fluttertoast.showToast(msg: jsonDecode(response.body)["message"]);
+          final userModelData = User.fromMap(jsonDecode(response.body)['user']);
+          final box = Hive.box("info");
+          await box.put("userInfo", userModelData.toJson());
+
+          http.Response response2 = await http.get(
+            Uri.parse(
+              "http://116.68.200.97:6048/api/v1/selected_player_list?user_id=${userModelData.id}",
+            ),
+          );
+
+          if (response2.statusCode == 200) {
+            final decodeData = jsonDecode(response2.body);
+            List<Map> listOfPalyers = List<Map>.from(decodeData["data"]);
+            if (listOfPalyers.length == 11) {
+              await box.put("team", listOfPalyers);
+              await box.put(
+                "teamName",
+                listOfPalyers[0]['team_name'],
+              );
+            }
+          }
+
+          await Get.offAll(() => const InitRoutes());
+        } else {
+          Fluttertoast.showToast(msg: jsonDecode(response.body)["message"]);
+        }
+      } else {
+        showDialog(
+          // ignore: use_build_context_synchronously
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text("Need internet connection"),
+              content: const Text(
+                "This app must need internet connection. Please cheak your internet connection and then try again",
+              ),
+              actions: [
+                OutlinedButton(
+                  onPressed: () {
+                    SystemNavigator.pop();
+                  },
+                  child: const Text(
+                    "Quit",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    login();
+                  },
+                  child: const Text(
+                    "Try again",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,55 +189,8 @@ class _LoginPageState extends State<LoginPage> {
                   height: 40,
                   width: 540,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      if (key.currentState!.validate()) {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) => Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.blue.shade800,
-                            ),
-                          ),
-                        );
-                        http.Response response = await http.post(
-                          Uri.parse(
-                            "http://116.68.200.97:6048/api/v1/login",
-                          ),
-                          body: {"mobile_number": numberController.text},
-                        );
-                        if (response.statusCode == 200) {
-                          Fluttertoast.showToast(
-                              msg: jsonDecode(response.body)["message"]);
-                          final userModelData =
-                              User.fromMap(jsonDecode(response.body)['user']);
-                          final box = Hive.box("info");
-                          await box.put("userInfo", userModelData.toJson());
-
-                          http.Response response2 = await http.get(
-                            Uri.parse(
-                              "http://116.68.200.97:6048/api/v1/selected_player_list?user_id=${userModelData.id}",
-                            ),
-                          );
-
-                          if (response2.statusCode == 200) {
-                            final decodeData = jsonDecode(response2.body);
-                            List<Map> listOfPalyers =
-                                List<Map>.from(decodeData["data"]);
-                            if (listOfPalyers.length == 11) {
-                              await box.put("team", listOfPalyers);
-                              await box.put(
-                                "teamName",
-                                listOfPalyers[0]['team_name'],
-                              );
-                            }
-                          }
-
-                          await Get.offAll(() => const InitRoutes());
-                        } else {
-                          Fluttertoast.showToast(
-                              msg: jsonDecode(response.body)["message"]);
-                        }
-                      }
+                    onPressed: () {
+                      login();
                     },
                     child: const Row(
                       children: [

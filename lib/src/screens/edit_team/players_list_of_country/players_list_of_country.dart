@@ -497,7 +497,7 @@ class _PlayerListState extends State<PlayerList> {
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                            "Here are the roules :",
+                                                            "Here are the rules :",
                                                             style: TextStyle(
                                                                 fontSize: 16,
                                                                 fontWeight:
