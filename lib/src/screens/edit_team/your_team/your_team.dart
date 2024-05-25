@@ -636,133 +636,26 @@ class _YourTeamState extends State<YourTeam> {
             const Spacer(),
             Obx(
               () {
-                bool isSelected = false;
                 int indexOfSelectedPlayer = -1;
                 for (int i = 0;
                     i < playerListControlller.selectedPlayer.length;
                     i++) {
                   if (playerListControlller.selectedPlayer[i].playerCode ==
                       player.playerCode) {
-                    isSelected = true;
                     indexOfSelectedPlayer = i;
                     break;
                   }
                 }
-                return playerListControlller.selectedPlayer.length >= 11 &&
-                        isSelected == false
-                    ? IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => Dialog(
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.90,
-                                padding: const EdgeInsets.only(
-                                    left: 20, bottom: 20, right: 20),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        IconButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          icon: const Icon(Icons.close),
-                                        ),
-                                      ],
-                                    ),
-                                    const Gap(30),
-                                    const Center(
-                                      child: Text(
-                                        "Your team member is full with 11 players. Please remove anyone from your team list then try again",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                    ),
-                                    const Gap(30),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.check_box_outline_blank,
-                          color: Colors.grey,
-                        ),
-                      )
-                    : Checkbox.adaptive(
-                        splashRadius: 40,
-                        value: isSelected,
-                        onChanged: (value) {
-                          if (isSelected) {
-                            playerListControlller.selectedPlayer
-                                .removeAt(indexOfSelectedPlayer);
-                          } else {
-                            String role = player.role;
-                            int alreadySelectedSameRole = 0;
-                            for (int i = 0;
-                                i < playerListControlller.selectedPlayer.length;
-                                i++) {
-                              if (role ==
-                                  playerListControlller
-                                      .selectedPlayer[i].role) {
-                                alreadySelectedSameRole++;
-                              }
-                            }
-                            if (PlayesrMaxMinRoules.max[role]! >
-                                alreadySelectedSameRole) {
-                              playerListControlller.selectedPlayer.add(player);
-                            } else {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text(
-                                      "Maximum ${PlayesrMaxMinRoules.max[role]} $role is allowed"),
-                                  content: const Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Here are the rules :",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Divider(
-                                        height: 2,
-                                      ),
-                                      Text(
-                                        "1. Batsman Minimum 2 & Maximum 4\n2. Bowler Minimum 2 & Maximum 4\n3. All-Rounder Minimum 2 & Maximum 4\n4. Wicket Keeper Minimum 1 & Maximum 3",
-                                      ),
-                                    ],
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text(
-                                        "Got it",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          }
-                        },
-                      );
+                return IconButton(
+                  onPressed: () {
+                    playerListControlller.selectedPlayer
+                        .removeAt(indexOfSelectedPlayer);
+                  },
+                  icon: const Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                  ),
+                );
               },
             ),
             const Gap(10),
