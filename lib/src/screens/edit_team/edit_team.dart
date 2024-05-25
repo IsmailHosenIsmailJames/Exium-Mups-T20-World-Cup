@@ -273,7 +273,8 @@ class _EditTeamState extends State<EditTeam> {
                                         ),
                                         Text(
                                           controller.contryListResult[index]
-                                              .countryName,
+                                              .countryName
+                                              .replaceAll("_", " "),
                                           textAlign: TextAlign.center,
                                           style: const TextStyle(
                                             fontSize: 18,
