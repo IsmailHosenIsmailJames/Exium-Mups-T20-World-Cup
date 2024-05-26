@@ -17,10 +17,13 @@ import 'package:http/http.dart' as http;
 
 import '../../../core/init_route.dart';
 import '../../../models/players_info_model.dart';
+import '../../home/controllers/user_info_controller.dart';
 
 class YourTeam extends StatefulWidget {
   final bool willUpdate;
-  const YourTeam({super.key, required this.willUpdate});
+  final int updateCount;
+  const YourTeam(
+      {super.key, required this.willUpdate, required this.updateCount});
 
   @override
   State<YourTeam> createState() => _YourTeamState();
@@ -78,7 +81,8 @@ class _YourTeamState extends State<YourTeam> {
                   ),
                 ),
                 onPressed: isReady != null ||
-                        playerListControlller.selectedPlayer.length < 11
+                        playerListControlller.selectedPlayer.length < 11 &&
+                            0 < 4 - widget.updateCount
                     ? null
                     : () async {
                         TextEditingController teamName = TextEditingController(
@@ -326,19 +330,14 @@ class _YourTeamState extends State<YourTeam> {
                               },
                             ),
                           );
-
                           if (response.statusCode == 200) {
-                            //save data to local
-                            await box.put("team", playersList);
-                            await box.put("teamName", teamName.text);
-                            Get.offAll(
-                              () => const InitRoutes(),
-                            );
-                            Fluttertoast.showToast(
-                                msg: jsonDecode(response.body)['message']);
+                            Get.offAll(() => const InitRoutes());
                           } else {
                             Fluttertoast.showToast(
-                                msg: jsonDecode(response.body)['error']);
+                              msg: (jsonDecode(response.body)['error'] ?? "")
+                                  .toString()
+                                  .replaceAll("has", "can"),
+                            );
                           }
                         }
                       },
@@ -371,6 +370,28 @@ class _YourTeamState extends State<YourTeam> {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                // ignore: use_build_context_synchronously
+                context: context,
+                builder: (context) => AlertDialog(
+                  content: const Text("You can edited your team 4 times."),
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("OK"),
+                    ),
+                  ],
+                ),
+              );
+            },
+            icon: const Icon(Icons.info),
+          ),
+        ],
       ),
       body: Obx(
         () {

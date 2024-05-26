@@ -99,10 +99,63 @@ class _MyDrawerState extends State<MyDrawer> {
             Container(
               margin: const EdgeInsets.only(left: 10, right: 10),
               child: ElevatedButton(
-                onPressed: () {
-                  Get.to(() => EditTeam(
-                        previousTeam: playersListController.players,
-                      ));
+                onPressed: () async {
+                  int updateCount =
+                      playersListController.players[0].updateCount ?? 0;
+                  final userInfoControllerGetx =
+                      Get.put(UserInfoControllerGetx());
+
+                  try {
+                    http.Response response2 = await http.get(
+                      Uri.parse(
+                        "http://116.68.200.97:6048/api/v1/selected_player_list?user_id=${userInfoControllerGetx.userInfo.value.id}",
+                      ),
+                    );
+
+                    if (response2.statusCode == 200) {
+                      final decodeData = jsonDecode(response2.body);
+                      List<Map> listOfPalyers =
+                          List<Map>.from(decodeData["data"]);
+                      if (listOfPalyers.length == 11) {
+                        updateCount = listOfPalyers[0]['update_count'];
+
+                        await Hive.box("info").put("team", listOfPalyers);
+                        await Hive.box("info").put(
+                          "teamName",
+                          listOfPalyers[0]['team_name'],
+                        );
+                      }
+                    }
+                    // ignore: empty_catches
+                  } catch (e) {
+                    Fluttertoast.showToast(msg: "Something went worng");
+                  }
+
+                  if (updateCount >= 4) {
+                    showDialog(
+                      // ignore: use_build_context_synchronously
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text("Team editing limit is over!"),
+                        content: const Text(
+                            "You've already edited your team 4 times."),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    Get.to(() => EditTeam(
+                          updateCount:
+                              playersListController.players[0].updateCount ?? 0,
+                          previousTeam: playersListController.players,
+                        ));
+                  }
                 },
                 child: const Row(
                   children: [

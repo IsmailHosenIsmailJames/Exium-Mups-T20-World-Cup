@@ -31,15 +31,6 @@ class _LoginPageState extends State<LoginPage> {
             connectivityResult.contains(ConnectivityResult.ethernet);
     if (key.currentState!.validate()) {
       if (isNetworkActive) {
-        showModalBottomSheet(
-          // ignore: use_build_context_synchronously
-          context: context,
-          builder: (context) => Center(
-            child: CircularProgressIndicator(
-              color: Colors.blue.shade800,
-            ),
-          ),
-        );
         http.Response response = await http.post(
           Uri.parse(
             "http://116.68.200.97:6048/api/v1/login",
@@ -71,8 +62,6 @@ class _LoginPageState extends State<LoginPage> {
           }
 
           await Get.offAll(() => const InitRoutes());
-        } else {
-          Fluttertoast.showToast(msg: jsonDecode(response.body)["message"]);
         }
       } else {
         showDialog(
@@ -171,6 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                     }
                   },
                   maxLength: 11,
+                  keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       Icons.phone_android,

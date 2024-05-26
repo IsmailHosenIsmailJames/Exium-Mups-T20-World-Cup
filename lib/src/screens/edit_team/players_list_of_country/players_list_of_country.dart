@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:exium_mups_t20_world_cup/src/core/get_uri_images.dart';
 import 'package:exium_mups_t20_world_cup/src/models/players_info_model.dart';
@@ -15,6 +14,7 @@ import '../your_team/your_team.dart';
 
 class PlayerList extends StatefulWidget {
   final int countryId;
+  final int updateCount;
   final String countryName;
   final String countryImageUrl;
   final bool willUpdate;
@@ -24,7 +24,8 @@ class PlayerList extends StatefulWidget {
       required this.countryId,
       required this.countryName,
       required this.countryImageUrl,
-      required this.willUpdate});
+      required this.willUpdate,
+      required this.updateCount});
 
   @override
   State<PlayerList> createState() => _PlayerListState();
@@ -103,6 +104,7 @@ class _PlayerListState extends State<PlayerList> {
               playerListControlller.selectedPlayer.value =
                   batsman + allrounder + wicketkeeper + bowler;
               Get.to(() => YourTeam(
+                    updateCount: widget.updateCount,
                     willUpdate: widget.willUpdate,
                   ));
             },

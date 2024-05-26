@@ -22,7 +22,9 @@ class InitRoutes extends StatelessWidget {
       return const LoginPage();
     } else {
       if (box.get("team", defaultValue: null) == null) {
-        return const EditTeam();
+        return const EditTeam(
+          updateCount: 0,
+        );
       } else {
         final userInfoControllerGetx = Get.put(UserInfoControllerGetx());
         WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
