@@ -19,6 +19,7 @@ class PlayerList extends StatefulWidget {
   final String countryImageUrl;
   final bool willUpdate;
   final List<PlayerInfoModel>? previousTeam;
+  final List<int>? playersCode;
 
   const PlayerList(
       {super.key,
@@ -27,7 +28,8 @@ class PlayerList extends StatefulWidget {
       required this.countryImageUrl,
       required this.willUpdate,
       required this.updateCount,
-      this.previousTeam});
+      this.previousTeam,
+      this.playersCode});
 
   @override
   State<PlayerList> createState() => _PlayerListState();
@@ -71,27 +73,31 @@ class _PlayerListState extends State<PlayerList> {
   }
 
   int getPlayerChangeCount(List<PlayerInfoModel> playersList) {
-    List<PlayerInfoModel> previousTeam = widget.previousTeam!;
-    int count = 0;
-    for (int i = 0; i < previousTeam.length; i++) {
-      int select = previousTeam[i].playerCode;
-      bool matched = false;
-      for (int j = 0; j < 11; j++) {
-        int compare = -1;
-        if (playersList.length > j) {
-          compare = playersList[j].playerCode;
+    if (widget.willUpdate) {
+      List<int> previousTeam = widget.playersCode!;
+      int count = 0;
+      for (int i = 0; i < previousTeam.length; i++) {
+        int select = previousTeam[i];
+        bool matched = false;
+        for (int j = 0; j < 11; j++) {
+          int compare = -1;
+          if (playersList.length > j) {
+            compare = playersList[j].playerCode;
+          }
+          if (select == compare) {
+            matched = true;
+            break;
+          }
         }
-        if (select == compare) {
-          matched = true;
-          break;
+        if (matched == false) {
+          count++;
         }
       }
-      if (matched == false) {
-        count++;
-      }
+      count += widget.updateCount;
+      return count;
+    } else {
+      return 0;
     }
-
-    return count;
   }
 
   @override
@@ -133,6 +139,7 @@ class _PlayerListState extends State<PlayerList> {
                     updateCount: widget.updateCount,
                     willUpdate: widget.willUpdate,
                     previousTeam: widget.previousTeam,
+                    playersCode: widget.playersCode,
                   ));
             },
             child: GetX<PlayerListOfACountryController>(
@@ -523,8 +530,49 @@ class _PlayerListState extends State<PlayerList> {
                         value: isSelected,
                         onChanged: (value) {
                           if (isSelected) {
-                            playerListControlller.selectedPlayer
-                                .removeAt(indexOfSelectedPlayer);
+                            int x = getPlayerChangeCount(
+                                playerListControlller.selectedPlayer);
+                            if (4 - x > 0) {
+                              playerListControlller.selectedPlayer
+                                  .removeAt(indexOfSelectedPlayer);
+                            } else {
+                              bool isExits = false;
+                              for (int code in widget.playersCode!) {
+                                if (playerListControlller
+                                        .selectedPlayer[indexOfSelectedPlayer]
+                                        .playerCode ==
+                                    code) {
+                                  isExits = true;
+                                  break;
+                                }
+                              }
+                              if (isExits == false) {
+                                playerListControlller.selectedPlayer
+                                    .removeAt(indexOfSelectedPlayer);
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text(
+                                        "Changing players limit is over."),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                          "Got it",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            }
                           } else {
                             String role = player.role;
                             int alreadySelectedSameRole = 0;
@@ -541,8 +589,11 @@ class _PlayerListState extends State<PlayerList> {
                             if ((PlayesrMaxMinRoules.max[role] ?? 3) >
                                 alreadySelectedSameRole) {
                               if (widget.willUpdate) {
+                                print("object");
                                 int c = getPlayerChangeCount(
                                     playerListControlller.selectedPlayer);
+                                print("object");
+
                                 if (!(4 - c >= 0)) {
                                   showDialog(
                                     context: context,
@@ -588,7 +639,7 @@ class _PlayerListState extends State<PlayerList> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Maximum ${PlayesrMaxMinRoules.max[role]} $role is allowed",
+                                          "Maximum ${PlayesrMaxMinRoules.max[role] ?? 3} $role is allowed",
                                           style: const TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold),

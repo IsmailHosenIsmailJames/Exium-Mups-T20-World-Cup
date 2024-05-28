@@ -140,6 +140,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     }
                   } catch (e) {
                     Fluttertoast.showToast(msg: "Something went worng");
+                    return;
                   }
 
                   if (updateCount >= 4) {
@@ -149,7 +150,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       builder: (context) => AlertDialog(
                         title: const Text("Team editing limit is over!"),
                         content: const Text(
-                            "You've already edited your team 4 times."),
+                            "You've already changed 4 players in your team."),
                         actions: [
                           ElevatedButton(
                             onPressed: () {
@@ -162,9 +163,15 @@ class _MyDrawerState extends State<MyDrawer> {
                     );
                   } else {
                     final x = Get.put(PlayersController());
+                    List<int> listOfCode = [];
+                    for (var e in x.players) {
+                      listOfCode.add(e.playerCode);
+                    }
+
                     Get.to(() => EditTeam(
                           updateCount: x.countUpdate.value,
                           previousTeam: playersListController.players,
+                          playersCode: listOfCode,
                         ));
                   }
                 },

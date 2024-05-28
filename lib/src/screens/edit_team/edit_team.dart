@@ -19,7 +19,12 @@ import 'controllers/player_list_of_country_controller_getx.dart';
 class EditTeam extends StatefulWidget {
   final int updateCount;
   final List<PlayerInfoModel>? previousTeam;
-  const EditTeam({super.key, this.previousTeam, required this.updateCount});
+  final List<int>? playersCode;
+  const EditTeam(
+      {super.key,
+      this.previousTeam,
+      required this.updateCount,
+      this.playersCode});
 
   @override
   State<EditTeam> createState() => _EditTeamState();
@@ -147,6 +152,7 @@ class _EditTeamState extends State<EditTeam> {
                     updateCount: widget.updateCount,
                     willUpdate: widget.previousTeam != null,
                     previousTeam: widget.previousTeam,
+                    playersCode: widget.playersCode,
                   ));
             },
             child: GetX<PlayerListOfACountryController>(
@@ -226,6 +232,7 @@ class _EditTeamState extends State<EditTeam> {
                                         willUpdate: widget.previousTeam != null,
                                         updateCount: widget.updateCount,
                                         previousTeam: widget.previousTeam,
+                                        playersCode: widget.playersCode,
                                       ),
                                     );
                                   },

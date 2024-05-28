@@ -22,11 +22,13 @@ class YourTeam extends StatefulWidget {
   final bool willUpdate;
   final int updateCount;
   final List<PlayerInfoModel>? previousTeam;
+  final List<int>? playersCode;
   const YourTeam(
       {super.key,
       required this.willUpdate,
       required this.updateCount,
-      this.previousTeam});
+      this.previousTeam,
+      this.playersCode});
 
   @override
   State<YourTeam> createState() => _YourTeamState();
@@ -73,10 +75,10 @@ class _YourTeamState extends State<YourTeam> {
   int appBarCountChangedPlayers = 0;
 
   int getPlayerChangeCount(List<PlayerInfoModel> playersList) {
-    List<PlayerInfoModel> previousTeam = widget.previousTeam!;
+    List<int> previousTeam = widget.playersCode!;
     int count = 0;
     for (int i = 0; i < 11; i++) {
-      int select = previousTeam[i].playerCode;
+      int select = previousTeam[i];
       bool matched = false;
       for (int j = 0; j < 11; j++) {
         int compare = -1;
@@ -421,8 +423,8 @@ class _YourTeamState extends State<YourTeam> {
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: const Text(
-                                      "You can change at most 4 players"),
+                                  title: Text(
+                                      "You can change at most ${widget.updateCount} players"),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
