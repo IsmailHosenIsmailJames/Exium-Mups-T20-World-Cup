@@ -146,6 +146,7 @@ class _EditTeamState extends State<EditTeam> {
               Get.to(() => YourTeam(
                     updateCount: widget.updateCount,
                     willUpdate: widget.previousTeam != null,
+                    previousTeam: widget.previousTeam,
                   ));
             },
             child: GetX<PlayerListOfACountryController>(
@@ -224,6 +225,7 @@ class _EditTeamState extends State<EditTeam> {
                                             .countryName,
                                         willUpdate: widget.previousTeam != null,
                                         updateCount: widget.updateCount,
+                                        previousTeam: widget.previousTeam,
                                       ),
                                     );
                                   },

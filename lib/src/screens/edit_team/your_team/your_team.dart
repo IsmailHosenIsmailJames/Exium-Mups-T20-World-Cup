@@ -17,13 +17,16 @@ import 'package:http/http.dart' as http;
 
 import '../../../core/init_route.dart';
 import '../../../models/players_info_model.dart';
-import '../../home/controllers/user_info_controller.dart';
 
 class YourTeam extends StatefulWidget {
   final bool willUpdate;
   final int updateCount;
+  final List<PlayerInfoModel>? previousTeam;
   const YourTeam(
-      {super.key, required this.willUpdate, required this.updateCount});
+      {super.key,
+      required this.willUpdate,
+      required this.updateCount,
+      this.previousTeam});
 
   @override
   State<YourTeam> createState() => _YourTeamState();
@@ -36,19 +39,25 @@ class _YourTeamState extends State<YourTeam> {
       "Batsman",
       "Bowler",
       "All-Rounder",
-      // "Wicket Keeper"
+      "Batsman ( wk )"
     ];
     List<String> rulesOfSelectingPlayes = [
       "Batsman Minimum 2",
       "Bowler Minimum 2",
       "All-Rounder Minimum 2",
-      // "Wicket Keeper Minimum 1 & Maximum 3",
+      "Wicket Keeper Minimum 1",
     ];
     for (int i = 0; i < roleList.length; i++) {
       int count = 0;
       for (int j = 0; j < playerListControlller.selectedPlayer.length; j++) {
         if (playerListControlller.selectedPlayer[j].role == roleList[i]) {
           count++;
+        } else {
+          if (roleList.contains(playerListControlller.selectedPlayer[j].role) ==
+                  false &&
+              i == 3) {
+            count++;
+          }
         }
       }
       if (count >= PlayesrMaxMinRoules.min[roleList[i]]! &&
@@ -61,8 +70,53 @@ class _YourTeamState extends State<YourTeam> {
     return null;
   }
 
+  int appBarCountChangedPlayers = 0;
+
+  int getPlayerChangeCount(List<PlayerInfoModel> playersList) {
+    List<PlayerInfoModel> previousTeam = widget.previousTeam!;
+    int count = 0;
+    for (int i = 0; i < 11; i++) {
+      int select = previousTeam[i].playerCode;
+      bool matched = false;
+      for (int j = 0; j < 11; j++) {
+        int compare = -1;
+        if (playersList.length > j) {
+          compare = playersList[j].playerCode;
+        }
+        if (select == compare) {
+          matched = true;
+          break;
+        }
+      }
+      if (matched == false) {
+        count++;
+      }
+    }
+    count += widget.updateCount;
+
+    setState(() {
+      appBarCountChangedPlayers = count;
+    });
+    return count;
+  }
+
+  bool isExitsInPreviousTeam(PlayerInfoModel player) {
+    if (widget.willUpdate) {
+      List<PlayerInfoModel> list = widget.previousTeam!;
+      for (int i = 0; i < list.length; i++) {
+        if (list[i].playerCode == player.playerCode) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (widget.willUpdate) {
+      getPlayerChangeCount(playerListControlller.selectedPlayer);
+    }
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
@@ -271,72 +325,120 @@ class _YourTeamState extends State<YourTeam> {
                             },
                           );
                         } else {
-                          final previousTeam = Get.put(PlayersController());
-                          List<bool> isNoChange = [];
-                          for (int i = 0;
-                              i < previousTeam.players.length;
-                              i++) {
-                            isNoChange.add(playerListControlller
-                                    .selectedPlayer[i].playerCode ==
-                                previousTeam.players[i].playerCode);
+                          int c = 0;
+
+                          if (widget.willUpdate) {
+                            c = getPlayerChangeCount(
+                                playerListControlller.selectedPlayer);
                           }
-                          if (!isNoChange.contains(false)) {
-                            Fluttertoast.showToast(
-                              msg:
-                                  "Can't save. No Change compared with previous",
-                              toastLength: Toast.LENGTH_LONG,
-                            );
-                            return;
-                          }
+                          if (4 - c >= 0) {
+                            final previousTeam = Get.put(PlayersController());
+                            List<bool> isNoChange = [];
+                            for (int i = 0;
+                                i < previousTeam.players.length;
+                                i++) {
+                              isNoChange.add(playerListControlller
+                                      .selectedPlayer[i].playerCode ==
+                                  previousTeam.players[i].playerCode);
+                            }
+                            if (!isNoChange.contains(false)) {
+                              Fluttertoast.showToast(
+                                msg:
+                                    "Can't save. No Change compared with previous",
+                                toastLength: Toast.LENGTH_LONG,
+                              );
+                              return;
+                            }
 
-                          final box = Hive.box("info");
-                          final userInfo =
-                              box.get("userInfo", defaultValue: null);
-                          User user = User.fromJson(userInfo);
-                          List<Map> playersList = [];
-                          List<Map> playersListToSendAPI = [];
+                            final box = Hive.box("info");
+                            final userInfo =
+                                box.get("userInfo", defaultValue: null);
+                            User user = User.fromJson(userInfo);
+                            List<Map> playersList = [];
+                            List<Map> playersListToSendAPI = [];
 
-                          for (int i = 0;
-                              i < playerListControlller.selectedPlayer.length;
-                              i++) {
-                            playersList.add(playerListControlller
-                                .selectedPlayer[i]
-                                .toMap());
+                            for (int i = 0;
+                                i < playerListControlller.selectedPlayer.length;
+                                i++) {
+                              playersList.add(playerListControlller
+                                  .selectedPlayer[i]
+                                  .toMap());
 
-                            playersListToSendAPI.add({
-                              "player_code": playerListControlller
-                                  .selectedPlayer[i].playerCode
-                            });
-                          }
+                              playersListToSendAPI.add({
+                                "player_code": playerListControlller
+                                    .selectedPlayer[i].playerCode
+                              });
+                            }
 
-                          http.Response response = await http.post(
-                            Uri.parse(
-                              widget.willUpdate
-                                  ? "http://116.68.200.97:6048/api/v1/update_player_select"
-                                  : "http://116.68.200.97:6048/api/v1/save_player_select",
-                            ),
-                            headers: {
-                              HttpHeaders.contentTypeHeader: "application/json"
-                            },
-                            body: jsonEncode(
-                              <String, dynamic>{
-                                "userInfo": {
-                                  "id": user.id,
-                                },
-                                "teamName": Hive.box("info")
-                                        .get("teamName", defaultValue: null) ??
-                                    "",
-                                "playersOfTeam": playersListToSendAPI,
+                            http.Response response = await http.post(
+                              Uri.parse(
+                                widget.willUpdate
+                                    ? "http://116.68.200.97:6048/api/v1/update_player_select"
+                                    : "http://116.68.200.97:6048/api/v1/save_player_select",
+                              ),
+                              headers: {
+                                HttpHeaders.contentTypeHeader:
+                                    "application/json"
                               },
-                            ),
-                          );
-                          if (response.statusCode == 200) {
-                            Get.offAll(() => const InitRoutes());
+                              body: jsonEncode(
+                                <String, dynamic>{
+                                  "userInfo": {
+                                    "id": user.id,
+                                  },
+                                  "teamName": Hive.box("info").get("teamName",
+                                          defaultValue: null) ??
+                                      "",
+                                  if (widget.willUpdate)
+                                    "changedPlayerCount": getPlayerChangeCount(
+                                        playerListControlller.selectedPlayer),
+                                  "playersOfTeam": playersListToSendAPI,
+                                },
+                              ),
+                            );
+                            if (response.statusCode == 200) {
+                              List<Map> teamToSave = [];
+                              for (int i = 0;
+                                  i <
+                                      playerListControlller
+                                          .selectedPlayer.length;
+                                  i++) {
+                                teamToSave.add(playerListControlller
+                                    .selectedPlayer[i]
+                                    .toMap());
+                              }
+                              final box = Hive.box("info");
+                              await box.put("team", teamToSave);
+                              Get.offAll(() => const InitRoutes());
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: (jsonDecode(response.body)['error'] ?? "")
+                                    .toString()
+                                    .replaceAll("has", "can"),
+                              );
+                            }
                           } else {
-                            Fluttertoast.showToast(
-                              msg: (jsonDecode(response.body)['error'] ?? "")
-                                  .toString()
-                                  .replaceAll("has", "can"),
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text(
+                                      "You can change at most 4 players"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        "Got it",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             );
                           }
                         }
@@ -371,26 +473,16 @@ class _YourTeamState extends State<YourTeam> {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              showDialog(
-                // ignore: use_build_context_synchronously
-                context: context,
-                builder: (context) => AlertDialog(
-                  content: const Text("You can edited your team 4 times."),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text("OK"),
-                    ),
-                  ],
-                ),
-              );
-            },
-            icon: const Icon(Icons.info),
-          ),
+          if (widget.willUpdate) Text("Left: ${4 - appBarCountChangedPlayers}"),
+          if (widget.willUpdate)
+            IconButton(
+              onPressed: () {
+                playerListControlller.selectedPlayer.value =
+                    widget.previousTeam!;
+                getPlayerChangeCount(playerListControlller.selectedPlayer);
+              },
+              icon: const Icon(Icons.restore),
+            ),
         ],
       ),
       body: Obx(
@@ -633,26 +725,28 @@ class _YourTeamState extends State<YourTeam> {
               ),
             ),
             const Gap(10),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  player.playerName,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+            FittedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    player.playerName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                Text(
-                  player.role,
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.grey.shade600,
-                    fontWeight: FontWeight.w500,
+                  Text(
+                    player.role,
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const Spacer(),
             Obx(
@@ -669,8 +763,44 @@ class _YourTeamState extends State<YourTeam> {
                 }
                 return IconButton(
                   onPressed: () {
-                    playerListControlller.selectedPlayer
-                        .removeAt(indexOfSelectedPlayer);
+                    int count = 0;
+                    if (widget.willUpdate) {
+                      count = getPlayerChangeCount(
+                          playerListControlller.selectedPlayer);
+                    }
+                    if (!(isExitsInPreviousTeam(playerListControlller
+                        .selectedPlayer[indexOfSelectedPlayer]))) {
+                      playerListControlller.selectedPlayer
+                          .removeAt(indexOfSelectedPlayer);
+                      return;
+                    }
+                    if (count >= 4) {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text(
+                                "You can change at most 4 players in total"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text(
+                                  "Got it",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      playerListControlller.selectedPlayer
+                          .removeAt(indexOfSelectedPlayer);
+                    }
                   },
                   icon: const Icon(
                     Icons.delete,

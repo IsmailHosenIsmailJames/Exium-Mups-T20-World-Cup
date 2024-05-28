@@ -116,6 +116,8 @@ class _MyDrawerState extends State<MyDrawer> {
                       final decodeData = jsonDecode(response2.body);
                       List<Map> listOfPalyers =
                           List<Map>.from(decodeData["data"]);
+                      print("object    x");
+
                       if (listOfPalyers.length == 11) {
                         updateCount = listOfPalyers[0]['update_count'];
 
@@ -125,8 +127,15 @@ class _MyDrawerState extends State<MyDrawer> {
                           listOfPalyers[0]['team_name'],
                         );
                       }
+                      int max = 0;
+                      for (int i = 0; i < listOfPalyers.length; i++) {
+                        if (listOfPalyers[i]['update_count'] > max) {
+                          max = listOfPalyers[i]['update_count'];
+                        }
+                      }
+                      final x = Get.put(PlayersController());
+                      x.countUpdate.value = max;
                     }
-                    // ignore: empty_catches
                   } catch (e) {
                     Fluttertoast.showToast(msg: "Something went worng");
                   }
@@ -150,9 +159,9 @@ class _MyDrawerState extends State<MyDrawer> {
                       ),
                     );
                   } else {
+                    final x = Get.put(PlayersController());
                     Get.to(() => EditTeam(
-                          updateCount:
-                              playersListController.players[0].updateCount ?? 0,
+                          updateCount: x.countUpdate.value,
                           previousTeam: playersListController.players,
                         ));
                   }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/players_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/drawer/drawer.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/fixtures/fixtures.dart';
@@ -53,6 +54,14 @@ class _HomePageState extends State<HomePage> {
               listOfPalyers[0]['team_name'],
             );
           }
+          int max = 0;
+          for (int i = 0; i < listOfPalyers.length; i++) {
+            if (listOfPalyers[i]['update_count'] > max) {
+              max = listOfPalyers[i]['update_count'];
+            }
+          }
+          final x = Get.put(PlayersController());
+          x.countUpdate.value = max;
         }
         // ignore: empty_catches
       } catch (e) {

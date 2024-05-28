@@ -137,7 +137,7 @@ class _SignUpState extends State<SignUp> {
                 children: [
                   Center(
                     child: Text(
-                      "Register",
+                      "Sign Up",
                       style: TextStyle(
                         color: Colors.blue.shade900,
                         fontSize: 70,
@@ -210,12 +210,14 @@ class _SignUpState extends State<SignUp> {
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     controller: passCodeController,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please type your name here...";
+                      if (value == null || value.isEmpty || value.length != 5) {
+                        return "Please type your territory code here...";
                       } else {
                         return null;
                       }
                     },
+                    keyboardType: TextInputType.number,
+                    maxLength: 5,
                     obscureText: true,
                     decoration: InputDecoration(
                       suffix: SizedBox(
@@ -370,7 +372,7 @@ class _SignUpState extends State<SignUp> {
                         children: [
                           Spacer(),
                           Text(
-                            "Register",
+                            "Sign Up",
                             style: TextStyle(
                                 fontSize: 22, fontWeight: FontWeight.w600),
                           ),

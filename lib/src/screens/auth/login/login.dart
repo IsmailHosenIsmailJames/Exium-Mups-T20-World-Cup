@@ -244,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Spacer(),
                         Text(
-                          "Register using Mobile Number",
+                          "Sign Up using Mobile Number",
                           style: TextStyle(
                             fontSize: 16,
                           ),

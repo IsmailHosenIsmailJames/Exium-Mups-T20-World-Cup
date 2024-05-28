@@ -18,6 +18,7 @@ class PlayerList extends StatefulWidget {
   final String countryName;
   final String countryImageUrl;
   final bool willUpdate;
+  final List<PlayerInfoModel>? previousTeam;
 
   const PlayerList(
       {super.key,
@@ -25,7 +26,8 @@ class PlayerList extends StatefulWidget {
       required this.countryName,
       required this.countryImageUrl,
       required this.willUpdate,
-      required this.updateCount});
+      required this.updateCount,
+      this.previousTeam});
 
   @override
   State<PlayerList> createState() => _PlayerListState();
@@ -68,6 +70,30 @@ class _PlayerListState extends State<PlayerList> {
     }
   }
 
+  int getPlayerChangeCount(List<PlayerInfoModel> playersList) {
+    List<PlayerInfoModel> previousTeam = widget.previousTeam!;
+    int count = 0;
+    for (int i = 0; i < 11; i++) {
+      int select = previousTeam[i].playerCode;
+      bool matched = false;
+      for (int j = 0; j < 11; j++) {
+        int compare = -1;
+        if (playersList.length > j) {
+          compare = playersList[j].playerCode;
+        }
+        if (select == compare) {
+          matched = true;
+          break;
+        }
+      }
+      if (matched == false) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,12 +132,14 @@ class _PlayerListState extends State<PlayerList> {
               Get.to(() => YourTeam(
                     updateCount: widget.updateCount,
                     willUpdate: widget.willUpdate,
+                    previousTeam: widget.previousTeam,
                   ));
             },
             child: GetX<PlayerListOfACountryController>(
               builder: (controller) {
                 return Text(
                   "Your Courrent Team : ${11 - controller.selectedPlayer.length} Players Left",
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -405,26 +433,28 @@ class _PlayerListState extends State<PlayerList> {
               ),
             ),
             const Gap(10),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  player.playerName,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+            FittedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    player.playerName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                Text(
-                  player.role,
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.grey.shade600,
-                    fontWeight: FontWeight.w500,
+                  Text(
+                    player.role,
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const Spacer(),
             Obx(
@@ -507,52 +537,107 @@ class _PlayerListState extends State<PlayerList> {
                                 alreadySelectedSameRole++;
                               }
                             }
-                            if (kDebugMode) {
-                              print(role);
-                            }
-                            if (PlayesrMaxMinRoules.max[role]! >
+
+                            if ((PlayesrMaxMinRoules.max[role] ?? 3) >
                                 alreadySelectedSameRole) {
+                              if (widget.willUpdate) {
+                                int c = getPlayerChangeCount(
+                                    playerListControlller.selectedPlayer);
+                                if (!(4 - c >= 0)) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text(
+                                              "Got it",
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                  return;
+                                }
+                              }
+
                               playerListControlller.selectedPlayer.add(player);
                             } else {
                               showDialog(
                                 context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text(
-                                      "Maximum ${PlayesrMaxMinRoules.max[role]} $role is allowed"),
-                                  content: const Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Here are the rules :",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Divider(
-                                        height: 2,
-                                      ),
-                                      Text(
-                                        "1. Batsman Minimum 2 & Maximum 4\n2. Bowler Minimum 2 & Maximum 4\n3. All-Rounder Minimum 2 & Maximum 4\n4. Wicket Keeper Minimum 1 & Maximum 3",
-                                      ),
-                                    ],
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text(
-                                        "Got it",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
+                                builder: (context) => Dialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: const EdgeInsets.all(10),
+                                    margin: const EdgeInsets.all(10),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Maximum ${PlayesrMaxMinRoules.max[role]} $role is allowed",
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      ),
+                                        const Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Here are the rules :",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Divider(
+                                              height: 2,
+                                            ),
+                                            Text(
+                                              "1. Batsman Minimum 2 & Maximum 4\n2. Bowler Minimum 2 & Maximum 4\n3. All-Rounder Minimum 2 & Maximum 4\n4. Wicket Keeper Minimum 1 & Maximum 3",
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const Gap(10),
+                                        Row(
+                                          children: [
+                                            const Spacer(),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text(
+                                                "Got it",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                               );
                             }
