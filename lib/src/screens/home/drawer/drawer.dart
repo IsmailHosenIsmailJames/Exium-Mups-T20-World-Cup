@@ -68,10 +68,10 @@ class _MyDrawerState extends State<MyDrawer> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: 30,
+                        height: 25,
                         width: MediaQuery.of(context).size.width * 0.45,
                         child: FittedBox(
-                          fit: BoxFit.fitWidth,
+                          alignment: Alignment.topLeft,
                           child: Text(
                             userInformationController.userInfo.value.fullName,
                             style: const TextStyle(
