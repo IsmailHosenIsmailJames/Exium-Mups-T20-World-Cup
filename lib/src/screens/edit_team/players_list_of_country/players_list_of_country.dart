@@ -73,7 +73,7 @@ class _PlayerListState extends State<PlayerList> {
   int getPlayerChangeCount(List<PlayerInfoModel> playersList) {
     List<PlayerInfoModel> previousTeam = widget.previousTeam!;
     int count = 0;
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < previousTeam.length; i++) {
       int select = previousTeam[i].playerCode;
       bool matched = false;
       for (int j = 0; j < 11; j++) {

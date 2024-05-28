@@ -59,9 +59,13 @@ class _LoginPageState extends State<LoginPage> {
                 listOfPalyers[0]['team_name'],
               );
             }
+          } else {
+            Fluttertoast.showToast(msg: jsonDecode(response2.body)['message']);
           }
 
           await Get.offAll(() => const InitRoutes());
+        } else {
+          Fluttertoast.showToast(msg: jsonDecode(response.body)['message']);
         }
       } else {
         showDialog(

@@ -67,15 +67,18 @@ class _MyDrawerState extends State<MyDrawer> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        userInformationController
-                                    .userInfo.value.fullName.length <
-                                23
-                            ? userInformationController.userInfo.value.fullName
-                            : "${userInformationController.userInfo.value.fullName.substring(0, 22)}...",
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      SizedBox(
+                        height: 30,
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        child: FittedBox(
+                          fit: BoxFit.fitWidth,
+                          child: Text(
+                            userInformationController.userInfo.value.fullName,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                       Text(
@@ -116,7 +119,6 @@ class _MyDrawerState extends State<MyDrawer> {
                       final decodeData = jsonDecode(response2.body);
                       List<Map> listOfPalyers =
                           List<Map>.from(decodeData["data"]);
-                      print("object    x");
 
                       if (listOfPalyers.length == 11) {
                         updateCount = listOfPalyers[0]['update_count'];
