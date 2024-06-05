@@ -121,25 +121,28 @@ class _LeaderboardTabState extends State<LeaderboardTab> {
                         children: [
                           Container(
                             height: 65,
-                            width: 65,
+                            width: MediaQuery.of(context).size.width * 0.15,
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.grey,
                               ),
                               borderRadius: BorderRadius.circular(50),
                             ),
-                            child: Center(
-                              child: Text(
-                                (index + 1).toString(),
-                                style: const TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w500,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Center(
+                                child: Text(
+                                  (index + 1).toString(),
+                                  style: const TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                           SizedBox(
-                            width: 65,
+                            width: MediaQuery.of(context).size.width * 0.15,
                             height: 65,
                             child: FutureBuilder(
                               future: getUriImage(
@@ -191,9 +194,10 @@ class _LeaderboardTabState extends State<LeaderboardTab> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.49,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
+                                width: MediaQuery.of(context).size.width * 0.40,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
                                   child: Text(
                                     listOfRanking[index].playerName,
                                     style: const TextStyle(
@@ -215,7 +219,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> {
                           const Spacer(),
                           Container(
                             height: 65,
-                            width: 65,
+                            width: MediaQuery.of(context).size.width * 0.25,
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.grey,
@@ -229,6 +233,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> {
                             ),
                             child: Center(
                               child: FittedBox(
+                                fit: BoxFit.scaleDown,
                                 child: Text(
                                   (listOfRanking[index].point).toString(),
                                   style: const TextStyle(
