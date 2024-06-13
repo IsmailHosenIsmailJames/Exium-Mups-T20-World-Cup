@@ -12,7 +12,14 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   Directory cachedDir = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(cachedDir.path);
-  await Hive.openBox("info");
+  final box = await Hive.openBox("info");
+  bool isDeletedOnceCached = box.get("deletedCache", defaultValue: false);
+
+  if (!isDeletedOnceCached) {
+    await box.clear();
+    box.put("deletedCache", true);
+  }
+
   runApp(const MyApp());
 }
 
@@ -36,7 +43,11 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const InitRoutes(),
+      home: MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: const TextScaler.linear(1.0)),
+        child: const InitRoutes(),
+      ),
     );
   }
 }

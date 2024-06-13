@@ -50,12 +50,16 @@ class _StandingsState extends State<Standings> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: (isLoading)
-          ? const Center(child: CupertinoActivityIndicator())
-          : WebViewWidget(
-              controller: controller,
-            ),
+    return MediaQuery(
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(1)),
+      child: Scaffold(
+        body: (isLoading)
+            ? const Center(child: CupertinoActivityIndicator())
+            : WebViewWidget(
+                controller: controller,
+              ),
+      ),
     );
   }
 }

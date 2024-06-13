@@ -102,211 +102,215 @@ class _PlayerListState extends State<PlayerList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton.extended(
-        extendedPadding: EdgeInsets.zero,
-        onPressed: null,
-        label: SizedBox(
-          height: 56,
-          width: 300,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+    return MediaQuery(
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(1)),
+      child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: FloatingActionButton.extended(
+          extendedPadding: EdgeInsets.zero,
+          onPressed: null,
+          label: SizedBox(
+            height: 56,
+            width: 300,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-            ),
-            onPressed: () {
-              List<PlayerInfoModel> batsman = [];
-              List<PlayerInfoModel> allrounder = [];
-              List<PlayerInfoModel> wicketkeeper = [];
-              List<PlayerInfoModel> bowler = [];
-              for (PlayerInfoModel player
-                  in playerListControlller.selectedPlayer) {
-                if (player.role == "Batsman") {
-                  batsman.add(player);
-                } else if (player.role == "Bowler") {
-                  bowler.add(player);
-                } else if (player.role == "All-Rounder") {
-                  allrounder.add(player);
-                } else {
-                  wicketkeeper.add(player);
+              onPressed: () {
+                List<PlayerInfoModel> batsman = [];
+                List<PlayerInfoModel> allrounder = [];
+                List<PlayerInfoModel> wicketkeeper = [];
+                List<PlayerInfoModel> bowler = [];
+                for (PlayerInfoModel player
+                    in playerListControlller.selectedPlayer) {
+                  if (player.role == "Batsman") {
+                    batsman.add(player);
+                  } else if (player.role == "Bowler") {
+                    bowler.add(player);
+                  } else if (player.role == "All-Rounder") {
+                    allrounder.add(player);
+                  } else {
+                    wicketkeeper.add(player);
+                  }
                 }
-              }
-              playerListControlller.selectedPlayer.value =
-                  batsman + allrounder + wicketkeeper + bowler;
-              Get.to(() => YourTeam(
-                    updateCount: widget.updateCount,
-                    willUpdate: widget.willUpdate,
-                    previousTeam: widget.previousTeam,
-                    playersCode: widget.playersCode,
-                  ));
-            },
-            child: GetX<PlayerListOfACountryController>(
-              builder: (controller) {
-                return Text(
-                  "Your Courrent Team : ${11 - controller.selectedPlayer.length} Players Left",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                );
+                playerListControlller.selectedPlayer.value =
+                    batsman + allrounder + wicketkeeper + bowler;
+                Get.to(() => YourTeam(
+                      updateCount: widget.updateCount,
+                      willUpdate: widget.willUpdate,
+                      previousTeam: widget.previousTeam,
+                      playersCode: widget.playersCode,
+                    ));
               },
-            ),
-          ),
-        ),
-      ),
-      appBar: AppBar(
-        leadingWidth: 35,
-        title: Row(
-          children: [
-            Text(
-              widget.countryName.replaceAll("_", " "),
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Spacer(),
-            Container(
-              margin: const EdgeInsets.all(5),
-              height: 40,
-              child: FutureBuilder(
-                future: getUriImage(widget.countryImageUrl),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    Uint8List? data = snapshot.data;
-                    if (data == null) {
-                      return const Icon(Icons.error);
-                    } else {
-                      return Image.memory(data);
-                    }
-                  }
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return const Icon(Icons.error);
-                  }
-                  return const CircularProgressIndicator();
+              child: GetX<PlayerListOfACountryController>(
+                builder: (controller) {
+                  return Text(
+                    "Your Courrent Team : ${11 - controller.selectedPlayer.length} Players Left",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  );
                 },
               ),
             ),
-          ],
+          ),
         ),
-      ),
-      body: Obx(
-        () {
-          if (playerListControlller.listOfPlayers.isEmpty &&
-              playerListControlller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (playerListControlller.isLoading.value == false &&
-              playerListControlller.listOfPlayers.isEmpty) {
-            return Center(
-              child: Text(
-                playerListControlller.errorMessage.value,
+        appBar: AppBar(
+          leadingWidth: 35,
+          title: Row(
+            children: [
+              Text(
+                widget.countryName.replaceAll("_", " "),
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            );
-          } else if (playerListControlller.listOfPlayers.isNotEmpty) {
-            List<Widget> batsmanWidgets = [];
-            List<Widget> allrounderWidgets = [];
-            List<Widget> wicketkeeperWidgets = [];
-            List<Widget> bowlerWidgets = [];
-
-            for (PlayerInfoModel player
-                in playerListControlller.listOfPlayers) {
-              if (player.role == "Batsman") {
-                batsmanWidgets.add(buildWidgetForPlayers(player));
-              } else if (player.role == "Bowler") {
-                bowlerWidgets.add(buildWidgetForPlayers(player));
-              } else if (player.role == "All-Rounder") {
-                allrounderWidgets.add(buildWidgetForPlayers(player));
-              } else {
-                wicketkeeperWidgets.add(buildWidgetForPlayers(player));
-              }
-            }
-            List<Widget> listOfAlPlayersWidget = <Widget>[
-                  const Gap(10),
-                  const Text(
-                    "Batsmen",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Divider(),
-                  if (batsmanWidgets.isEmpty)
-                    const Center(
-                      child: Text("Empty"),
-                    ),
-                ] +
-                batsmanWidgets +
-                [
-                  const Gap(10),
-                  const Text(
-                    "Wicket Keepers",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Divider(),
-                  if (wicketkeeperWidgets.isEmpty)
-                    const Center(
-                      child: Text("Empty"),
-                    ),
-                ] +
-                wicketkeeperWidgets +
-                [
-                  const Gap(10),
-                  const Text(
-                    "All-Rounders",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Divider(),
-                  if (allrounderWidgets.isEmpty)
-                    const Center(
-                      child: Text("Empty"),
-                    ),
-                ] +
-                allrounderWidgets +
-                [
-                  const Gap(10),
-                  const Text(
-                    "Bowlers",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Divider(),
-                  if (bowlerWidgets.isEmpty)
-                    const Center(
-                      child: Text("Empty"),
-                    ),
-                ] +
-                bowlerWidgets;
-
-            return SafeArea(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView(
-                      cacheExtent: 100,
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 10, bottom: 100),
-                      children: listOfAlPlayersWidget,
-                    ),
-                  ),
-                ],
+              const Spacer(),
+              Container(
+                margin: const EdgeInsets.all(5),
+                height: 40,
+                child: FutureBuilder(
+                  future: getUriImage(widget.countryImageUrl),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      Uint8List? data = snapshot.data;
+                      if (data == null) {
+                        return const Icon(Icons.error);
+                      } else {
+                        return Image.memory(data);
+                      }
+                    }
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return const Icon(Icons.error);
+                    }
+                    return const CircularProgressIndicator();
+                  },
+                ),
               ),
-            );
-          }
-          return Container();
-        },
+            ],
+          ),
+        ),
+        body: Obx(
+          () {
+            if (playerListControlller.listOfPlayers.isEmpty &&
+                playerListControlller.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (playerListControlller.isLoading.value == false &&
+                playerListControlller.listOfPlayers.isEmpty) {
+              return Center(
+                child: Text(
+                  playerListControlller.errorMessage.value,
+                  style: const TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              );
+            } else if (playerListControlller.listOfPlayers.isNotEmpty) {
+              List<Widget> batsmanWidgets = [];
+              List<Widget> allrounderWidgets = [];
+              List<Widget> wicketkeeperWidgets = [];
+              List<Widget> bowlerWidgets = [];
+
+              for (PlayerInfoModel player
+                  in playerListControlller.listOfPlayers) {
+                if (player.role == "Batsman") {
+                  batsmanWidgets.add(buildWidgetForPlayers(player));
+                } else if (player.role == "Bowler") {
+                  bowlerWidgets.add(buildWidgetForPlayers(player));
+                } else if (player.role == "All-Rounder") {
+                  allrounderWidgets.add(buildWidgetForPlayers(player));
+                } else {
+                  wicketkeeperWidgets.add(buildWidgetForPlayers(player));
+                }
+              }
+              List<Widget> listOfAlPlayersWidget = <Widget>[
+                    const Gap(10),
+                    const Text(
+                      "Batsmen",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Divider(),
+                    if (batsmanWidgets.isEmpty)
+                      const Center(
+                        child: Text("Empty"),
+                      ),
+                  ] +
+                  batsmanWidgets +
+                  [
+                    const Gap(10),
+                    const Text(
+                      "Wicket Keepers",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Divider(),
+                    if (wicketkeeperWidgets.isEmpty)
+                      const Center(
+                        child: Text("Empty"),
+                      ),
+                  ] +
+                  wicketkeeperWidgets +
+                  [
+                    const Gap(10),
+                    const Text(
+                      "All-Rounders",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Divider(),
+                    if (allrounderWidgets.isEmpty)
+                      const Center(
+                        child: Text("Empty"),
+                      ),
+                  ] +
+                  allrounderWidgets +
+                  [
+                    const Gap(10),
+                    const Text(
+                      "Bowlers",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Divider(),
+                    if (bowlerWidgets.isEmpty)
+                      const Center(
+                        child: Text("Empty"),
+                      ),
+                  ] +
+                  bowlerWidgets;
+
+              return SafeArea(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        cacheExtent: 100,
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 10, bottom: 100),
+                        children: listOfAlPlayersWidget,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+            return Container();
+          },
+        ),
       ),
     );
   }
