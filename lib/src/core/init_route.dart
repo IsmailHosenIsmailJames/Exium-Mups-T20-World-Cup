@@ -1,3 +1,4 @@
+import 'package:exium_mups_t20_world_cup/src/core/in_app_update/cheak_for_update.dart';
 import 'package:exium_mups_t20_world_cup/src/models/players_info_model.dart';
 import 'package:exium_mups_t20_world_cup/src/models/success_login_responce.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/auth/login/login.dart';
@@ -17,6 +18,7 @@ class InitRoutes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FlutterNativeSplash.remove();
+    cheakUpdateAvailable(context);
     final box = Hive.box("info");
     if (box.get("userInfo", defaultValue: null) == null) {
       return const LoginPage();
@@ -32,14 +34,41 @@ class InitRoutes extends StatelessWidget {
               User.fromJson(box.get("userInfo"));
         });
         List<Map> teamPlayersList = List<Map>.from(box.get("team"));
+
         final playersController = Get.put(PlayersController());
+
+        int max = 0;
+        for (int i = 0; i < teamPlayersList.length; i++) {
+          if (teamPlayersList[i]['update_count'] > max) {
+            max = teamPlayersList[i]['update_count'];
+          }
+        }
+
         List<PlayerInfoModel> listOfModelOfPlayers = [];
         for (int i = 0; i < teamPlayersList.length; i++) {
-          listOfModelOfPlayers.add(PlayerInfoModel.fromMap(
-              Map<String, dynamic>.from(teamPlayersList[i])));
+          if (PlayerInfoModel.fromMap(
+                  Map<String, dynamic>.from(teamPlayersList[i]))
+              .teamName!
+              .isNotEmpty) {
+            listOfModelOfPlayers.add(PlayerInfoModel.fromMap(
+                Map<String, dynamic>.from(teamPlayersList[i])));
+          }
         }
+        List<PlayerInfoModel> reseverd = [];
+        for (int i = 0; i < teamPlayersList.length; i++) {
+          if (PlayerInfoModel.fromMap(
+                  Map<String, dynamic>.from(teamPlayersList[i]))
+              .teamName!
+              .isEmpty) {
+            reseverd.add(PlayerInfoModel.fromMap(
+                Map<String, dynamic>.from(teamPlayersList[i])));
+          }
+        }
+
         WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
           playersController.players.value = listOfModelOfPlayers;
+          playersController.reservedList.value = reseverd;
+          playersController.countUpdate.value = max;
         });
         return const HomePage();
       }

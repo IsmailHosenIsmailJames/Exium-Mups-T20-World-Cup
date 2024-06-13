@@ -58,26 +58,30 @@ if (element) {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // toolbarHeight: 40
-        title: Text(
-          widget.appbar ?? "Live Score",
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.white,
-      ),
-      extendBodyBehindAppBar: true,
-      body: (isLoading)
-          ? const Center(child: CupertinoActivityIndicator())
-          : WebViewWidget(
-              controller: controller,
+    return MediaQuery(
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(1)),
+      child: Scaffold(
+        appBar: AppBar(
+          // toolbarHeight: 40
+          title: Text(
+            widget.appbar ?? "Live Score",
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w500,
             ),
+          ),
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.white,
+        ),
+        extendBodyBehindAppBar: true,
+        body: (isLoading)
+            ? const Center(child: CupertinoActivityIndicator())
+            : WebViewWidget(
+                controller: controller,
+              ),
+      ),
     );
   }
 }

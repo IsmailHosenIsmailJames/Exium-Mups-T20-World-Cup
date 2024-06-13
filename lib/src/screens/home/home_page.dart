@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:exium_mups_t20_world_cup/src/models/players_info_model.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/players_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/controllers/user_info_controller.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/drawer/drawer.dart';
@@ -47,13 +48,14 @@ class _HomePageState extends State<HomePage> {
         if (response2.statusCode == 200) {
           final decodeData = jsonDecode(response2.body);
           List<Map> listOfPalyers = List<Map>.from(decodeData["data"]);
-          if (listOfPalyers.length == 11) {
+          if (listOfPalyers.isNotEmpty) {
             await Hive.box("info").put("team", listOfPalyers);
             await Hive.box("info").put(
               "teamName",
               listOfPalyers[0]['team_name'],
             );
           }
+
           int max = 0;
           for (int i = 0; i < listOfPalyers.length; i++) {
             if (listOfPalyers[i]['update_count'] > max) {
@@ -61,7 +63,32 @@ class _HomePageState extends State<HomePage> {
             }
           }
           final x = Get.put(PlayersController());
+
           x.countUpdate.value = max;
+          List<PlayerInfoModel> tem = [];
+          for (int i = 0; i < listOfPalyers.length; i++) {
+            if (PlayerInfoModel.fromMap(
+                    Map<String, dynamic>.from(listOfPalyers[i]))
+                .teamName!
+                .isNotEmpty) {
+              tem.add(PlayerInfoModel.fromMap(
+                  Map<String, dynamic>.from(listOfPalyers[i])));
+            }
+          }
+          List<PlayerInfoModel> reserved = [];
+
+          for (int i = 0; i < listOfPalyers.length; i++) {
+            if (PlayerInfoModel.fromMap(
+                    Map<String, dynamic>.from(listOfPalyers[i]))
+                .teamName!
+                .isEmpty) {
+              reserved.add(PlayerInfoModel.fromMap(
+                  Map<String, dynamic>.from(listOfPalyers[i])));
+            }
+          }
+
+          x.players.value = tem;
+          x.reservedList.value = reserved;
         }
         // ignore: empty_catches
       } catch (e) {
@@ -116,71 +143,77 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  String teamName = Hive.box("info").get("teamName", defaultValue: "");
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Text(Hive.box("info").get("teamName")),
-            const Spacer(),
-            CircleAvatar(
-              radius: 23,
-              backgroundColor: Colors.blue.shade900.withOpacity(0.3),
-              backgroundImage: const NetworkImage(
-                "https://upload.wikimedia.org/wikipedia/commons/9/92/Cricket-hit-wall-sticker1.png",
+    return MediaQuery(
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(1)),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            children: [
+              Text(teamName),
+              const Spacer(),
+              CircleAvatar(
+                radius: 23,
+                backgroundColor: Colors.blue.shade900.withOpacity(0.3),
+                backgroundImage: const NetworkImage(
+                  "https://upload.wikimedia.org/wikipedia/commons/9/92/Cricket-hit-wall-sticker1.png",
+                ),
               ),
-            ),
-            const Gap(10),
-          ],
+              const Gap(10),
+            ],
+          ),
+          // toolbarHeight: 120,
+          backgroundColor: Colors.white.withOpacity(0.4),
         ),
-        // toolbarHeight: 120,
-        backgroundColor: Colors.white.withOpacity(0.4),
-      ),
-      drawer: const MyDrawer(),
-      body: [
-        Container(
-          color: Colors.white.withOpacity(0.35),
-          child: const HomeTab(),
-        ),
-        const Fixtures(),
-        const Standings(),
-        const LeaderboardTab(),
-      ][selectedPageIndex],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        margin: const EdgeInsets.all(3),
-        child: SalomonBottomBar(
-          currentIndex: selectedPageIndex,
-          onTap: (i) => setState(() => selectedPageIndex = i),
-          items: [
-            SalomonBottomBarItem(
-              icon: const Icon(FluentIcons.home_12_regular),
-              title: const Text("Home"),
-              selectedColor: Colors.purple,
-            ),
-            SalomonBottomBarItem(
-              icon: const Icon(FluentIcons.calendar_32_regular),
-              title: const Text("Fixtures"),
-              selectedColor: Colors.pink,
-            ),
-            SalomonBottomBarItem(
-              icon: const Icon(
-                CupertinoIcons.group,
-                size: 28,
+        drawer: const MyDrawer(),
+        body: [
+          Container(
+            color: Colors.white.withOpacity(0.35),
+            child: const HomeTab(),
+          ),
+          const Fixtures(),
+          const Standings(),
+          const LeaderboardTab(),
+        ][selectedPageIndex],
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          margin: const EdgeInsets.all(3),
+          child: SalomonBottomBar(
+            currentIndex: selectedPageIndex,
+            onTap: (i) => setState(() => selectedPageIndex = i),
+            items: [
+              SalomonBottomBarItem(
+                icon: const Icon(FluentIcons.home_12_regular),
+                title: const Text("Home"),
+                selectedColor: Colors.purple,
               ),
-              title: const Text("Standing"),
-              selectedColor: Colors.orange.shade800,
-            ),
-            SalomonBottomBarItem(
-              icon: const Icon(FluentIcons.chart_multiple_20_regular),
-              title: const Text("LeaderBoard"),
-              selectedColor: Colors.teal,
-            ),
-          ],
+              SalomonBottomBarItem(
+                icon: const Icon(FluentIcons.calendar_32_regular),
+                title: const Text("Fixtures"),
+                selectedColor: Colors.pink,
+              ),
+              SalomonBottomBarItem(
+                icon: const Icon(
+                  CupertinoIcons.group,
+                  size: 28,
+                ),
+                title: const Text("Standing"),
+                selectedColor: Colors.orange.shade800,
+              ),
+              SalomonBottomBarItem(
+                icon: const Icon(FluentIcons.chart_multiple_20_regular),
+                title: const Text("LeaderBoard"),
+                selectedColor: Colors.teal,
+              ),
+            ],
+          ),
         ),
       ),
     );

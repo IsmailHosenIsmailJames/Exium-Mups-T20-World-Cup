@@ -38,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
           body: {"mobile_number": numberController.text},
         );
         if (response.statusCode == 200) {
+          print(response.body);
           Fluttertoast.showToast(msg: jsonDecode(response.body)["message"]);
           final userModelData = User.fromMap(jsonDecode(response.body)['user']);
           final box = Hive.box("info");
@@ -52,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
           if (response2.statusCode == 200) {
             final decodeData = jsonDecode(response2.body);
             List<Map> listOfPalyers = List<Map>.from(decodeData["data"]);
-            if (listOfPalyers.length == 11) {
+            if (listOfPalyers.isNotEmpty) {
               await box.put("team", listOfPalyers);
               await box.put(
                 "teamName",
@@ -113,172 +114,176 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-            // color: Colors.white.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(10),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                const Color.fromARGB(255, 151, 255, 203).withOpacity(0.5),
-                const Color.fromARGB(255, 136, 103, 255).withOpacity(0.5)
-              ],
+    return MediaQuery(
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(1)),
+      child: Scaffold(
+        body: Center(
+          child: Container(
+            decoration: BoxDecoration(
+              // color: Colors.white.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(10),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color.fromARGB(255, 151, 255, 203).withOpacity(0.5),
+                  const Color.fromARGB(255, 136, 103, 255).withOpacity(0.5)
+                ],
+              ),
             ),
-          ),
-          height: 450,
-          width: MediaQuery.of(context).size.width * 0.92,
-          child: Form(
-            key: key,
-            child: ListView(
-              padding: const EdgeInsets.all(10),
-              children: [
-                Center(
-                  child: Text(
-                    "Login",
-                    style: TextStyle(
-                      color: Colors.blue.shade900,
-                      fontSize: 70,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                TextFormField(
-                  controller: numberController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value == null || value.length != 11) {
-                      return " Please fill number properly";
-                    } else {
-                      try {
-                        int.parse(value);
-                        return null;
-                      } catch (e) {
-                        return " Please fill number properly";
-                      }
-                    }
-                  },
-                  maxLength: 11,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      Icons.phone_android,
-                      color: Colors.blue.shade900,
-                    ),
-                    hintText: "type your phone number here...",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        10,
+            height: 450,
+            width: MediaQuery.of(context).size.width * 0.92,
+            child: Form(
+              key: key,
+              child: ListView(
+                padding: const EdgeInsets.all(10),
+                children: [
+                  Center(
+                    child: Text(
+                      "Login",
+                      style: TextStyle(
+                        color: Colors.blue.shade900,
+                        fontSize: 70,
+                        fontWeight: FontWeight.w800,
                       ),
-                      borderSide: const BorderSide(width: 2),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 40,
-                  width: 540,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      login();
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  TextFormField(
+                    controller: numberController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.length != 11) {
+                        return " Please fill number properly";
+                      } else {
+                        try {
+                          int.parse(value);
+                          return null;
+                        } catch (e) {
+                          return " Please fill number properly";
+                        }
+                      }
                     },
-                    child: const Row(
-                      children: [
-                        Spacer(),
-                        Text(
-                          "Login",
-                          style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.w600),
+                    maxLength: 11,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.phone_android,
+                        color: Colors.blue.shade900,
+                      ),
+                      hintText: "type your phone number here...",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          10,
                         ),
-                        Spacer(),
-                        Icon(
-                          Icons.arrow_forward,
-                        ),
-                      ],
+                        borderSide: const BorderSide(width: 2),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: 1,
-                      width: 50,
-                      color: Colors.black,
+                  SizedBox(
+                    height: 40,
+                    width: 540,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        login();
+                      },
+                      child: const Row(
+                        children: [
+                          Spacer(),
+                          Text(
+                            "Login",
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.w600),
+                          ),
+                          Spacer(),
+                          Icon(
+                            Icons.arrow_forward,
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(
-                      width: 10,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 1,
+                        width: 50,
+                        color: Colors.black,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
+                        "or don't have account?",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        height: 1,
+                        width: 50,
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  SizedBox(
+                    height: 40,
+                    width: 540,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Get.off(() => const SignUp());
+                      },
+                      child: const Row(
+                        children: [
+                          Spacer(),
+                          Text(
+                            "Sign Up using Mobile Number",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          Spacer(),
+                          Icon(Icons.arrow_forward)
+                        ],
+                      ),
                     ),
-                    const Text(
-                      "or don't have account?",
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Center(
+                    child: Text(
+                      "Powered By",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                      height: 1,
-                      width: 50,
-                      color: Colors.black,
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                SizedBox(
-                  height: 40,
-                  width: 540,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.off(() => const SignUp());
-                    },
-                    child: const Row(
-                      children: [
-                        Spacer(),
-                        Text(
-                          "Sign Up using Mobile Number",
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                        Spacer(),
-                        Icon(Icons.arrow_forward)
-                      ],
+                  ),
+                  SizedBox(
+                    height: 80,
+                    child: Image.asset(
+                      "assets/exium/Exium-MUPS_Exium_MUPS.png",
+                      fit: BoxFit.cover,
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Center(
-                  child: Text(
-                    "Powered By",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 80,
-                  child: Image.asset(
-                    "assets/exium/Exium-MUPS_Exium_MUPS.png",
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

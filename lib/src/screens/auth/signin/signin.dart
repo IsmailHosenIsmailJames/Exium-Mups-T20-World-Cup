@@ -113,354 +113,360 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  const Color.fromARGB(255, 151, 255, 203).withOpacity(0.5),
-                  const Color.fromARGB(255, 136, 103, 255).withOpacity(0.5)
-                ],
+    return MediaQuery(
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(1)),
+      child: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color.fromARGB(255, 151, 255, 203).withOpacity(0.5),
+                    const Color.fromARGB(255, 136, 103, 255).withOpacity(0.5)
+                  ],
+                ),
               ),
-            ),
-            height: 630,
-            width: MediaQuery.of(context).size.width * 0.92,
-            child: Form(
-              key: key,
-              child: ListView(
-                padding: const EdgeInsets.all(10),
-                children: [
-                  Center(
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(
-                        color: Colors.blue.shade900,
-                        fontSize: 70,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: nameController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please type your name here...";
-                      } else {
-                        return null;
-                      }
-                    },
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.person,
-                        color: Colors.blue.shade900,
-                      ),
-                      labelText: "Your Name",
-                      hintText: "type your name here...",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          10,
+              height: 630,
+              width: MediaQuery.of(context).size.width * 0.92,
+              child: Form(
+                key: key,
+                child: ListView(
+                  padding: const EdgeInsets.all(10),
+                  children: [
+                    Center(
+                      child: Text(
+                        "Sign Up",
+                        style: TextStyle(
+                          color: Colors.blue.shade900,
+                          fontSize: 70,
+                          fontWeight: FontWeight.w800,
                         ),
-                        borderSide: const BorderSide(width: 2),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: phoneController,
-                    validator: (value) {
-                      if (value == null || value.length != 11) {
-                        return "Please type your phone number properly...";
-                      } else {
-                        return null;
-                      }
-                    },
-                    keyboardType: TextInputType.phone,
-                    maxLength: 11,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.phone_android,
-                        color: Colors.blue.shade900,
-                      ),
-                      labelText: "Phone Number",
-                      hintText: "type your phone number here...",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          10,
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      controller: nameController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please type your name here...";
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: Colors.blue.shade900,
                         ),
-                        borderSide: const BorderSide(width: 2),
+                        labelText: "Your Name",
+                        hintText: "type your name here...",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            10,
+                          ),
+                          borderSide: const BorderSide(width: 2),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: passCodeController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty || value.length != 5) {
-                        return "Please type your territory code here...";
-                      } else {
-                        return null;
-                      }
-                    },
-                    keyboardType: TextInputType.number,
-                    maxLength: 5,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      suffix: SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          iconSize: 15,
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => Dialog(
-                                child: Container(
-                                  margin: const EdgeInsets.all(20),
-                                  width:
-                                      MediaQuery.of(context).size.width - 150,
-                                  height: 200,
-                                  child: const Center(
-                                    child: Text(
-                                      "Territory Code will be provided\nby\nRadiant Colleague",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 18),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      controller: phoneController,
+                      validator: (value) {
+                        if (value == null || value.length != 11) {
+                          return "Please type your phone number properly...";
+                        } else {
+                          return null;
+                        }
+                      },
+                      keyboardType: TextInputType.phone,
+                      maxLength: 11,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.phone_android,
+                          color: Colors.blue.shade900,
+                        ),
+                        labelText: "Phone Number",
+                        hintText: "type your phone number here...",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            10,
+                          ),
+                          borderSide: const BorderSide(width: 2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      controller: passCodeController,
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            value.length != 5) {
+                          return "Please type your territory code here...";
+                        } else {
+                          return null;
+                        }
+                      },
+                      keyboardType: TextInputType.number,
+                      maxLength: 5,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        suffix: SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            iconSize: 15,
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                  child: Container(
+                                    margin: const EdgeInsets.all(20),
+                                    width:
+                                        MediaQuery.of(context).size.width - 150,
+                                    height: 200,
+                                    child: const Center(
+                                      child: Text(
+                                        "Territory Code will be provided\nby\nRadiant Colleague",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 18),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
+                              );
+                            },
+                            icon: const Icon(FluentIcons.info_12_filled),
+                          ),
+                        ),
+                        prefixIcon: Icon(
+                          CupertinoIcons.lock,
+                          color: Colors.blue.shade900,
+                        ),
+                        labelText: "Territory Code",
+                        hintText: "type the territory code here...",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            10,
+                          ),
+                          borderSide: const BorderSide(width: 2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Account type :",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: errorIndecatpr,
+                          ),
+                        ),
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            setState(() {
+                              accountTypeFlag = 0;
+                              errorIndecatpr = Colors.black;
+                            });
                           },
-                          icon: const Icon(FluentIcons.info_12_filled),
-                        ),
-                      ),
-                      prefixIcon: Icon(
-                        CupertinoIcons.lock,
-                        color: Colors.blue.shade900,
-                      ),
-                      labelText: "Territory Code",
-                      hintText: "type the territory code here...",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          10,
-                        ),
-                        borderSide: const BorderSide(width: 2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Account type :",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: errorIndecatpr,
-                        ),
-                      ),
-                      GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          setState(() {
-                            accountTypeFlag = 0;
-                            errorIndecatpr = Colors.black;
-                          });
-                        },
-                        child: Container(
-                          height: 35,
-                          width: MediaQuery.of(context).size.width * 0.30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(
-                              color: Colors.black,
+                          child: Container(
+                            height: 35,
+                            width: MediaQuery.of(context).size.width * 0.30,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(
+                                color: Colors.black,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Checkbox.adaptive(
+                                  value: accountTypeFlag == 0,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      accountTypeFlag = 0;
+                                      errorIndecatpr = Colors.black;
+                                    });
+                                  },
+                                ),
+                                const Text(
+                                  "Doctor",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            children: [
-                              Checkbox.adaptive(
-                                value: accountTypeFlag == 0,
-                                onChanged: (value) {
-                                  setState(() {
-                                    accountTypeFlag = 0;
-                                    errorIndecatpr = Colors.black;
-                                  });
-                                },
-                              ),
-                              const Text(
-                                "Doctor",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            accountTypeFlag = 1;
-                            errorIndecatpr = Colors.black;
-                          });
-                        },
-                        behavior: HitTestBehavior.translucent,
-                        child: Container(
-                          height: 35,
-                          width: MediaQuery.of(context).size.width * 0.30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(
-                              color: Colors.black,
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              accountTypeFlag = 1;
+                              errorIndecatpr = Colors.black;
+                            });
+                          },
+                          behavior: HitTestBehavior.translucent,
+                          child: Container(
+                            height: 35,
+                            width: MediaQuery.of(context).size.width * 0.30,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(
+                                color: Colors.black,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Checkbox.adaptive(
+                                  value: accountTypeFlag == 1,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      accountTypeFlag = 1;
+                                      errorIndecatpr = Colors.black;
+                                    });
+                                  },
+                                ),
+                                const Text(
+                                  "CHQ",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            children: [
-                              Checkbox.adaptive(
-                                value: accountTypeFlag == 1,
-                                onChanged: (value) {
-                                  setState(() {
-                                    accountTypeFlag = 1;
-                                    errorIndecatpr = Colors.black;
-                                  });
-                                },
-                              ),
-                              const Text(
-                                "CHQ",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      height: 40,
+                      width: 540,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          signUp();
+                        },
+                        child: const Row(
+                          children: [
+                            Spacer(),
+                            Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.w600),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Icons.arrow_forward,
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    height: 40,
-                    width: 540,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        signUp();
-                      },
-                      child: const Row(
-                        children: [
-                          Spacer(),
-                          Text(
-                            "Sign Up",
-                            style: TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 1,
+                          width: 60,
+                          color: Colors.black,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const Text(
+                          "or Already have account?",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Spacer(),
-                          Icon(
-                            Icons.arrow_forward,
-                          ),
-                        ],
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          height: 1,
+                          width: 60,
+                          color: Colors.black,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      height: 40,
+                      width: 540,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Get.off(() => const LoginPage());
+                        },
+                        child: const Row(
+                          children: [
+                            Spacer(),
+                            Text(
+                              "Login",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Spacer(),
+                            Icon(Icons.arrow_forward)
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 1,
-                        width: 60,
-                        color: Colors.black,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Text(
-                        "or Already have account?",
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    const Center(
+                      child: Text(
+                        "Powered By",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Container(
-                        height: 1,
-                        width: 60,
-                        color: Colors.black,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  SizedBox(
-                    height: 40,
-                    width: 540,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Get.off(() => const LoginPage());
-                      },
-                      child: const Row(
-                        children: [
-                          Spacer(),
-                          Text(
-                            "Login",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                          Spacer(),
-                          Icon(Icons.arrow_forward)
-                        ],
+                    ),
+                    SizedBox(
+                      height: 80,
+                      child: Image.asset(
+                        "assets/exium/Exium-MUPS_Exium_MUPS.png",
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const Center(
-                    child: Text(
-                      "Powered By",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 80,
-                    child: Image.asset(
-                      "assets/exium/Exium-MUPS_Exium_MUPS.png",
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

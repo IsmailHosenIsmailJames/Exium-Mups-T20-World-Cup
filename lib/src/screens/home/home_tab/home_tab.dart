@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:exium_mups_t20_world_cup/src/screens/home/home_tab/home_tab_controller_getx.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/live_web_score/web_view_live_score.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,7 +27,6 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  bool isPlayerList = false;
   final userInformationController = Get.put(UserInfoControllerGetx());
   List countryList = [];
 
@@ -57,8 +58,7 @@ class _HomeTabState extends State<HomeTab> {
 
   final controllerURL = WebViewController();
   String javascript = '''
-var navElement = document.getElementById("nav");
-navElement.style.display = "none";
+
 var element = document.querySelector('.col-span-3');
 if (element) {
     element.style.display = 'none';
@@ -72,8 +72,9 @@ if (element) {
     element.style.display = 'none';
 }
 
-window.scrollBy(0, 48);
-
+window.onload = function() {
+    window.scrollTo({ top: 50, behavior: 'smooth' });
+};
 function preventDefault(e) {
     e.preventDefault();
 }
@@ -128,217 +129,179 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
     }
   }
 
+  final x = Get.put(HomeTabControllerGetx());
   @override
   Widget build(BuildContext context) {
-    return isPlayerList
-        ? GetX<PlayersController>(
-            builder: (controller) {
-              List<Widget> batsman = [];
-              List<Widget> allrounder = [];
-              List<Widget> wicketkeeper = [];
-              List<Widget> bowler = [];
-              for (PlayerInfoModel player in controller.players) {
-                if (player.role == "Batsman") {
-                  batsman.add(buildCardOfPlayers(player));
-                } else if (player.role == "Bowler") {
-                  bowler.add(buildCardOfPlayers(player));
-                } else if (player.role == "All-Rounder") {
-                  allrounder.add(buildCardOfPlayers(player));
-                } else {
-                  wicketkeeper.add(buildCardOfPlayers(player));
+    return GetX<HomeTabControllerGetx>(
+      builder: (controllerHomeTab) => controllerHomeTab.isPlayerList.value
+          ? GetX<PlayersController>(
+              builder: (controller) {
+                List<Widget> batsman = [];
+                List<Widget> allrounder = [];
+                List<Widget> wicketkeeper = [];
+                List<Widget> bowler = [];
+                List<Widget> reseverd = [];
+                for (PlayerInfoModel player in controller.players) {
+                  if (player.role == "Batsman") {
+                    batsman.add(buildCardOfPlayers(player));
+                  } else if (player.role == "Bowler") {
+                    bowler.add(buildCardOfPlayers(player));
+                  } else if (player.role == "All-Rounder") {
+                    allrounder.add(buildCardOfPlayers(player));
+                  } else {
+                    wicketkeeper.add(buildCardOfPlayers(player));
+                  }
                 }
-              }
-              return ListView(
-                padding: const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                ),
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () {
-                            setState(() {
-                              isPlayerList = false;
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.arrow_back,
+                for (int i = 0; i < controller.reservedList.length; i++) {
+                  reseverd.add(buildCardOfPlayers(controller.reservedList[i]));
+                }
+                return ListView(
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                  ),
+                  children: [
+                    Row(
+                      children: [
+                        SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () {
+                              controllerHomeTab.isPlayerList.value = false;
+                            },
+                            icon: const Icon(
+                              Icons.arrow_back,
+                            ),
                           ),
                         ),
-                      ),
-                      const Spacer()
-                    ],
-                  ),
-                  const Gap(10),
-                  const Center(
-                    child: Text(
-                      "Batsman",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                        const Spacer()
+                      ],
                     ),
-                  ),
-                  const Divider(
-                    height: 2,
-                    color: Colors.black,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: batsman,
-                  ),
-                  const Gap(10),
-                  const Center(
-                    child: Text(
-                      "All Rounder",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const Divider(
-                    height: 2,
-                    color: Colors.black,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: allrounder,
-                  ),
-                  if (wicketkeeper.isNotEmpty) const Gap(10),
-                  if (wicketkeeper.isNotEmpty)
+                    const Gap(10),
                     const Center(
                       child: Text(
-                        "Wicket Keeper",
+                        "Batsman",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                  if (wicketkeeper.isNotEmpty)
                     const Divider(
                       height: 2,
                       color: Colors.black,
                     ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: wicketkeeper,
-                  ),
-                  const Gap(10),
-                  const Center(
-                    child: Text(
-                      "Bowler",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: batsman,
+                    ),
+                    const Gap(10),
+                    const Center(
+                      child: Text(
+                        "All Rounder",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  const Divider(
-                    height: 2,
-                    color: Colors.black,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: bowler,
-                  ),
-                ],
-              );
-            },
-          )
-        : ListView(
-            children: [
-              GetX<PlayersController>(
-                builder: (controller) {
-                  int totalPoint = 0;
-                  for (var e in controller.players) {
-                    totalPoint += e.totalPoint ?? 0;
-                  }
-                  return StreamBuilder(
-                    stream: getTimeStream(),
-                    builder: (context, snapshot) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isPlayerList = true;
-                                });
-                              },
-                              behavior: HitTestBehavior.translucent,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                margin: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      const Color.fromARGB(255, 79, 223, 255)
-                                          .withOpacity(0.5),
-                                      const Color.fromARGB(255, 136, 103, 255)
-                                          .withOpacity(0.5)
-                                    ],
-                                  ),
-                                ),
-                                alignment: Alignment.center,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      userInformationController
-                                          .userInfo.value.fullName,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                    Text(
-                                      Hive.box("info").get("teamName"),
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      totalPoint.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 40,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const Text(
-                                      "Team Points",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    const Gap(5),
-                                    Text(
-                                      "View details",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.blue.shade900,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.all(5),
+                    const Divider(
+                      height: 2,
+                      color: Colors.black,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: allrounder,
+                    ),
+                    if (wicketkeeper.isNotEmpty) const Gap(10),
+                    if (wicketkeeper.isNotEmpty)
+                      const Center(
+                        child: Text(
+                          "Wicket Keeper",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    if (wicketkeeper.isNotEmpty)
+                      const Divider(
+                        height: 2,
+                        color: Colors.black,
+                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: wicketkeeper,
+                    ),
+                    const Gap(10),
+                    const Center(
+                      child: Text(
+                        "Bowler",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const Divider(
+                      height: 2,
+                      color: Colors.black,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: bowler,
+                    ),
+                    const Gap(10),
+                    const Center(
+                      child: Text(
+                        "Reserved Player",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const Divider(
+                      height: 2,
+                      color: Colors.black,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: reseverd,
+                    ),
+                  ],
+                );
+              },
+            )
+          : ListView(
+              children: [
+                GetX<PlayersController>(
+                  builder: (controller) {
+                    int totalPoint = 0;
+                    for (var e in controller.players) {
+                      totalPoint += e.totalPoint ?? 0;
+                    }
+                    for (var e in controller.reservedList) {
+                      totalPoint += e.totalPoint ?? 0;
+                    }
+
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                controllerHomeTab.isPlayerList.value = true;
+                              });
+                            },
+                            behavior: HitTestBehavior.translucent,
+                            child: Container(
                               width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.all(5),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 gradient: LinearGradient(
@@ -352,199 +315,259 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                                   ],
                                 ),
                               ),
+                              alignment: Alignment.center,
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  SizedBox(
-                                    height: 290,
-                                    child: (isLoading)
-                                        ? const Center(
-                                            child: CupertinoActivityIndicator())
-                                        : WebViewWidget(
-                                            controller: controllerURL,
-                                          ),
+                                  Text(
+                                    userInformationController
+                                        .userInfo.value.fullName,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                  GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    onTap: () {
-                                      if (urlOfLive.isNotEmpty) {
-                                        Get.to(() => WebViewLiveScore(
-                                              url: urlOfLive,
-                                            ));
-                                      } else {
-                                        Fluttertoast.showToast(
-                                            msg: "Loading... Please wait.");
-                                      }
-                                    },
-                                    child: const SizedBox(
-                                      height: 50,
-                                      child: Row(children: [
-                                        Spacer(
-                                          flex: 5,
-                                        ),
-                                        Text(
-                                          "View details",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600,
-                                            color:
-                                                Color.fromARGB(255, 0, 50, 124),
-                                          ),
-                                        ),
-                                        Spacer(
-                                          flex: 4,
-                                        ),
-                                        Icon(
-                                          Icons.arrow_forward_rounded,
-                                          color: Colors.black,
-                                          size: 30,
-                                        ),
-                                        Gap(10)
-                                      ]),
+                                  Text(
+                                    Hive.box("info").get("teamName"),
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    totalPoint.toString(),
+                                    style: const TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const Text(
+                                    "Team Points",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  const Gap(5),
+                                  Text(
+                                    "View details",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.blue.shade900,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ],
                               ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.all(5),
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  const Color.fromARGB(255, 79, 223, 255)
+                                      .withOpacity(0.5),
+                                  const Color.fromARGB(255, 136, 103, 255)
+                                      .withOpacity(0.5)
+                                ],
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 300,
+                                  child: (isLoading)
+                                      ? const Center(
+                                          child: CupertinoActivityIndicator())
+                                      : WebViewWidget(
+                                          controller: controllerURL,
+                                        ),
+                                ),
+                                GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  onTap: () {
+                                    if (urlOfLive.isNotEmpty) {
+                                      Get.to(() => WebViewLiveScore(
+                                            url: urlOfLive,
+                                          ));
+                                    } else {
+                                      Fluttertoast.showToast(
+                                          msg: "Loading... Please wait.");
+                                    }
+                                  },
+                                  child: const SizedBox(
+                                    height: 50,
+                                    child: Row(children: [
+                                      Spacer(
+                                        flex: 5,
+                                      ),
+                                      Text(
+                                        "View details",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                          color:
+                                              Color.fromARGB(255, 0, 50, 124),
+                                        ),
+                                      ),
+                                      Spacer(
+                                        flex: 4,
+                                      ),
+                                      Icon(
+                                        Icons.arrow_forward_rounded,
+                                        color: Colors.black,
+                                        size: 30,
+                                      ),
+                                      Gap(10)
+                                    ]),
+                                  ),
+                                ),
+                              ],
+                            ),
 
-                              // Column(
-                              //   children: [
-                              //     Container(
-                              //       color: isLive
-                              //           ? Colors.red
-                              //           : Colors.white.withOpacity(0.5),
-                              //       height: 25,
-                              //       width: isLive ? 55 : 150,
-                              //       alignment: Alignment.center,
-                              //       child: Text(
-                              //         isLive ? "LIVE" : "UPCOMMING",
-                              //         style: TextStyle(
-                              //           color: isLive
-                              //               ? Colors.white
-                              //               : Colors.blue.shade900,
-                              //           fontSize: 18,
-                              //         ),
-                              //       ),
-                              //     ),
-                              //     const Gap(10),
-                              //     Row(
-                              //       mainAxisAlignment:
-                              //           MainAxisAlignment.spaceBetween,
-                              //       crossAxisAlignment: CrossAxisAlignment.center,
-                              //       children: [
-                              //         Column(
-                              //           children: [
-                              //             SizedBox(
-                              //               height: 80,
-                              //               width: 150,
-                              //               child: team1 == null
-                              //                   ? Image.asset(
-                              //                       'assets/background/flag.png')
-                              //                   : Image.network(
-                              //                       "http://116.68.200.97:6048/images/flags/${team1.countryImage}",
-                              //                       fit: BoxFit.fitHeight,
-                              //                     ),
-                              //             ),
-                              //             const Gap(5),
-                              //             Text(
-                              //               matchInfo[4],
-                              //               style: const TextStyle(
-                              //                 fontSize: 18,
-                              //                 fontWeight: FontWeight.w600,
-                              //               ),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //         Column(
-                              //           children: [
-                              //             Text(
-                              //               "VS",
-                              //               style: TextStyle(
-                              //                 fontSize: 40,
-                              //                 color: Colors.blue.shade900,
-                              //                 fontWeight: FontWeight.w600,
-                              //               ),
-                              //             ),
-                              //             if (!isLive)
-                              //               StreamBuilder(
-                              //                 stream:
-                              //                     getMiliseconSinceEpochSteam(),
-                              //                 builder: (context, snapshot) {
-                              //                   Duration duration = startEpoch
-                              //                       .difference(snapshot.data ??
-                              //                           DateTime.now());
-                              //                   return Text(
-                              //                     "${duration.inDays} Days, \n${duration.inHours % 24} Hours,\n${duration.inMinutes % 60} Min, ${duration.inSeconds % 60} Sec",
-                              //                     textAlign: TextAlign.center,
-                              //                   );
-                              //                 },
-                              //               ),
-                              //           ],
-                              //         ),
-                              //         Column(
-                              //           crossAxisAlignment:
-                              //               CrossAxisAlignment.center,
-                              //           mainAxisAlignment:
-                              //               MainAxisAlignment.center,
-                              //           children: [
-                              //             SizedBox(
-                              //               height: 80,
-                              //               width: 150,
-                              //               child: team2 == null
-                              //                   ? Image.asset(
-                              //                       'assets/background/flag.png')
-                              //                   : Image.network(
-                              //                       "http://116.68.200.97:6048/images/flags/${team2.countryImage}",
-                              //                       fit: BoxFit.fitHeight,
-                              //                     ),
-                              //             ),
-                              //             const Gap(5),
-                              //             Text(
-                              //               matchInfo[5],
-                              //               style: const TextStyle(
-                              //                 fontSize: 18,
-                              //                 fontWeight: FontWeight.w600,
-                              //               ),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ],
-                              //     )
-                              //   ],
-                              // ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.all(5),
-                              height: 100,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      const Color.fromARGB(255, 79, 223, 255)
-                                          .withOpacity(0.5),
-                                      const Color.fromARGB(255, 136, 103, 255)
-                                          .withOpacity(0.5)
-                                    ],
+                            // Column(
+                            //   children: [
+                            //     Container(
+                            //       color: isLive
+                            //           ? Colors.red
+                            //           : Colors.white.withOpacity(0.5),
+                            //       height: 25,
+                            //       width: isLive ? 55 : 150,
+                            //       alignment: Alignment.center,
+                            //       child: Text(
+                            //         isLive ? "LIVE" : "UPCOMMING",
+                            //         style: TextStyle(
+                            //           color: isLive
+                            //               ? Colors.white
+                            //               : Colors.blue.shade900,
+                            //           fontSize: 18,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     const Gap(10),
+                            //     Row(
+                            //       mainAxisAlignment:
+                            //           MainAxisAlignment.spaceBetween,
+                            //       crossAxisAlignment: CrossAxisAlignment.center,
+                            //       children: [
+                            //         Column(
+                            //           children: [
+                            //             SizedBox(
+                            //               height: 80,
+                            //               width: 150,
+                            //               child: team1 == null
+                            //                   ? Image.asset(
+                            //                       'assets/background/flag.png')
+                            //                   : Image.network(
+                            //                       "http://116.68.200.97:6048/images/flags/${team1.countryImage}",
+                            //                       fit: BoxFit.fitHeight,
+                            //                     ),
+                            //             ),
+                            //             const Gap(5),
+                            //             Text(
+                            //               matchInfo[4],
+                            //               style: const TextStyle(
+                            //                 fontSize: 18,
+                            //                 fontWeight: FontWeight.w600,
+                            //               ),
+                            //             ),
+                            //           ],
+                            //         ),
+                            //         Column(
+                            //           children: [
+                            //             Text(
+                            //               "VS",
+                            //               style: TextStyle(
+                            //                 fontSize: 40,
+                            //                 color: Colors.blue.shade900,
+                            //                 fontWeight: FontWeight.w600,
+                            //               ),
+                            //             ),
+                            //             if (!isLive)
+                            //               StreamBuilder(
+                            //                 stream:
+                            //                     getMiliseconSinceEpochSteam(),
+                            //                 builder: (context, snapshot) {
+                            //                   Duration duration = startEpoch
+                            //                       .difference(snapshot.data ??
+                            //                           DateTime.now());
+                            //                   return Text(
+                            //                     "${duration.inDays} Days, \n${duration.inHours % 24} Hours,\n${duration.inMinutes % 60} Min, ${duration.inSeconds % 60} Sec",
+                            //                     textAlign: TextAlign.center,
+                            //                   );
+                            //                 },
+                            //               ),
+                            //           ],
+                            //         ),
+                            //         Column(
+                            //           crossAxisAlignment:
+                            //               CrossAxisAlignment.center,
+                            //           mainAxisAlignment:
+                            //               MainAxisAlignment.center,
+                            //           children: [
+                            //             SizedBox(
+                            //               height: 80,
+                            //               width: 150,
+                            //               child: team2 == null
+                            //                   ? Image.asset(
+                            //                       'assets/background/flag.png')
+                            //                   : Image.network(
+                            //                       "http://116.68.200.97:6048/images/flags/${team2.countryImage}",
+                            //                       fit: BoxFit.fitHeight,
+                            //                     ),
+                            //             ),
+                            //             const Gap(5),
+                            //             Text(
+                            //               matchInfo[5],
+                            //               style: const TextStyle(
+                            //                 fontSize: 18,
+                            //                 fontWeight: FontWeight.w600,
+                            //               ),
+                            //             ),
+                            //           ],
+                            //         ),
+                            //       ],
+                            //     )
+                            //   ],
+                            // ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.all(5),
+                            height: 100,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    const Color.fromARGB(255, 79, 223, 255)
+                                        .withOpacity(0.5),
+                                    const Color.fromARGB(255, 136, 103, 255)
+                                        .withOpacity(0.5)
+                                  ],
+                                ),
+                                image: const DecorationImage(
+                                  image: AssetImage(
+                                    "assets/exium/Exium-MUPS_Exium_MUPS.png",
                                   ),
-                                  image: const DecorationImage(
-                                    image: AssetImage(
-                                      "assets/exium/Exium-MUPS_Exium_MUPS.png",
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
-                                  border:
-                                      Border.all(color: Colors.blue.shade900)),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          );
+                                  fit: BoxFit.cover,
+                                ),
+                                border:
+                                    Border.all(color: Colors.blue.shade900)),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+    );
   }
 
   Widget buildCardOfPlayers(PlayerInfoModel player) {
@@ -577,36 +600,13 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                   SizedBox(
                     height: 200,
                     width: 200,
-                    child: FutureBuilder(
-                      future: getUriImage(
-                        "http://116.68.200.97:6048/images/players/${player.playerImage}",
-                      ),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          Uint8List? data = snapshot.data;
-                          if (data != null) {
-                            return Image.memory(data);
-                          } else {
-                            return const Icon(
-                              FluentIcons.person_32_regular,
-                              size: 40,
-                              color: Colors.grey,
-                            );
-                          }
-                        }
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return const Icon(
-                            FluentIcons.person_32_regular,
-                            size: 40,
-                            color: Colors.grey,
-                          );
-                        }
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        );
-                      },
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          "http://116.68.200.97:6048/images/players/${player.playerImage}",
+                      placeholder: (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
                     ),
                   ),
                   const Gap(5),
@@ -648,27 +648,13 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                                 color: Colors.grey.withOpacity(0.5),
                               ),
                             ),
-                            child: FutureBuilder(
-                              future: getUriImage(
-                                  "http://116.68.200.97:6048/images/flags/${player.countryImage}"),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  Uint8List? data = snapshot.data;
-                                  if (data == null) {
-                                    return const Icon(Icons.error);
-                                  } else {
-                                    return Image.memory(data);
-                                  }
-                                }
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  return Image.asset(
-                                    "assets/background/flag.png",
-                                    fit: BoxFit.fitHeight,
-                                  );
-                                }
-                                return const CircularProgressIndicator();
-                              },
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  "http://116.68.200.97:6048/images/flags/${player.countryImage}",
+                              placeholder: (context, url) => const Center(
+                                  child: CircularProgressIndicator()),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
                             ),
                           ),
                           Text(
@@ -696,93 +682,12 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
             SizedBox(
               height: 120,
               width: 120,
-              child: FutureBuilder(
-                future: getUriImage(
-                    "http://116.68.200.97:6048/images/players/${player.playerImage}"),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    Uint8List? response = snapshot.data;
-                    if (response == null) {
-                      return const Icon(
-                        FluentIcons.person_32_regular,
-                        size: 40,
-                        color: Colors.black,
-                      );
-                    } else {
-                      return Container(
-                        padding: const EdgeInsets.all(2),
-                        margin: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            image: MemoryImage(response),
-                            fit: BoxFit.fitHeight,
-                          ),
-                          color: const Color.fromARGB(255, 41, 141, 255)
-                              .withOpacity(0.2),
-                        ),
-                        alignment: Alignment.bottomRight,
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white.withOpacity(0.7)),
-                          child: Text(
-                            "${player.totalPoint ?? 0}",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 0, 56, 141),
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                  }
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return Container(
-                      padding: const EdgeInsets.all(2),
-                      margin: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color.fromARGB(255, 41, 141, 255)
-                            .withOpacity(0.2),
-                      ),
-                      child: Column(
-                        children: [
-                          const Icon(
-                            FluentIcons.person_32_regular,
-                            size: 40,
-                            color: Colors.black,
-                          ),
-                          Row(
-                            children: [
-                              const Spacer(),
-                              Container(
-                                padding: const EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white.withOpacity(0.7)),
-                                child: Text(
-                                  "${player.totalPoint ?? 0}",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromARGB(255, 0, 56, 141),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  return const Center(
-                      child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ));
-                },
+              child: CachedNetworkImage(
+                imageUrl:
+                    "http://116.68.200.97:6048/images/players/${player.playerImage}",
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             Center(
