@@ -39,17 +39,24 @@ class InitRoutes extends StatelessWidget {
 
         int max = 0;
         for (int i = 0; i < teamPlayersList.length; i++) {
-          if (teamPlayersList[i]['update_count'] > max) {
-            max = teamPlayersList[i]['update_count'];
+          if (teamPlayersList[i].keys.contains("update_count") &&
+              teamPlayersList[i]['update_count'].runtimeType != bool) {
+            if (teamPlayersList[i]['update_count'] as int > max) {
+              max = teamPlayersList[i]['update_count'];
+            }
           }
         }
 
         List<PlayerInfoModel> listOfModelOfPlayers = [];
         for (int i = 0; i < teamPlayersList.length; i++) {
           if (PlayerInfoModel.fromMap(
-                  Map<String, dynamic>.from(teamPlayersList[i]))
-              .teamName!
-              .isNotEmpty) {
+                          Map<String, dynamic>.from(teamPlayersList[i]))
+                      .teamName !=
+                  null &&
+              PlayerInfoModel.fromMap(
+                      Map<String, dynamic>.from(teamPlayersList[i]))
+                  .teamName!
+                  .isNotEmpty) {
             listOfModelOfPlayers.add(PlayerInfoModel.fromMap(
                 Map<String, dynamic>.from(teamPlayersList[i])));
           }
@@ -57,9 +64,13 @@ class InitRoutes extends StatelessWidget {
         List<PlayerInfoModel> reseverd = [];
         for (int i = 0; i < teamPlayersList.length; i++) {
           if (PlayerInfoModel.fromMap(
-                  Map<String, dynamic>.from(teamPlayersList[i]))
-              .teamName!
-              .isEmpty) {
+                          Map<String, dynamic>.from(teamPlayersList[i]))
+                      .teamName ==
+                  null ||
+              PlayerInfoModel.fromMap(
+                      Map<String, dynamic>.from(teamPlayersList[i]))
+                  .teamName!
+                  .isEmpty) {
             reseverd.add(PlayerInfoModel.fromMap(
                 Map<String, dynamic>.from(teamPlayersList[i])));
           }

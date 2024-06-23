@@ -52,6 +52,8 @@ class _LoginPageState extends State<LoginPage> {
 
           if (response2.statusCode == 200) {
             final decodeData = jsonDecode(response2.body);
+            print("decoded data ..............");
+            print(decodeData);
             List<Map> listOfPalyers = List<Map>.from(decodeData["data"]);
             if (listOfPalyers.isNotEmpty) {
               await box.put("team", listOfPalyers);
