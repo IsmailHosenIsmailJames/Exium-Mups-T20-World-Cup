@@ -26,6 +26,10 @@ A Flutter project on about T20 World Cup For Doctors and CHQ. This app will be t
 2. Minimum 2 bowlers, Maximum 4 bowlers.
 3. Minimum 2 All-rounder, Maximum 4 All-rounder.
 4. Minimum 1 wicketkeeper, Maximum 3 wicketkeeper.
+![Screenshot_20240629-063631](https://github.com/IsmailHosenIsmailJames/Exium-Mups-T20-World-Cup/assets/99122172/1d63e50b-352b-4744-8e35-b4428b86bae0)
+![Screenshot_20240629-063627](https://github.com/IsmailHosenIsmailJames/Exium-Mups-T20-World-Cup/assets/99122172/a2c4bad3-483d-4893-b2e8-8aff3f64bac8)
+![Screenshot_20240629-063616](https://github.com/IsmailHosenIsmailJames/Exium-Mups-T20-World-Cup/assets/99122172/27f6bcaa-caac-4371-8ce7-6be2b9065389)
+
 
 ### 3. Give a name of Team and Save your team.
 ![Screenshot_20240629-071623](https://github.com/IsmailHosenIsmailJames/Exium-Mups-T20-World-Cup/assets/99122172/4524e7b5-261e-4b58-aeed-f1d8abc13a73)
