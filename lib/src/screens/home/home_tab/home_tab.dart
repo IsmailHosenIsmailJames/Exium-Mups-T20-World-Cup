@@ -127,7 +127,9 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
   }
 
   final x = Get.put(HomeTabControllerGetx());
+
   String name = Hive.box("info").get("teamName");
+  
   @override
   Widget build(BuildContext context) {
     return GetX<HomeTabControllerGetx>(
@@ -679,7 +681,6 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
           children: [
             SizedBox(
               height: 120,
-              width: 120,
               child: Container(
                 padding: const EdgeInsets.all(2),
                 margin: const EdgeInsets.all(2),
@@ -709,6 +710,7 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                     ),
                   ),
                 ),
+
               ),
             ),
             Center(

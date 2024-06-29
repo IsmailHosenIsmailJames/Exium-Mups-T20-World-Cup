@@ -44,12 +44,14 @@ class InitRoutes extends StatelessWidget {
             if (teamPlayersList[i]['update_count'] as int > max) {
               max = teamPlayersList[i]['update_count'];
             }
+
           }
         }
 
         List<PlayerInfoModel> listOfModelOfPlayers = [];
         for (int i = 0; i < teamPlayersList.length; i++) {
           if (PlayerInfoModel.fromMap(
+
                           Map<String, dynamic>.from(teamPlayersList[i]))
                       .teamName !=
                   null &&
@@ -57,6 +59,7 @@ class InitRoutes extends StatelessWidget {
                       Map<String, dynamic>.from(teamPlayersList[i]))
                   .teamName!
                   .isNotEmpty) {
+
             listOfModelOfPlayers.add(PlayerInfoModel.fromMap(
                 Map<String, dynamic>.from(teamPlayersList[i])));
           }
@@ -71,6 +74,7 @@ class InitRoutes extends StatelessWidget {
                       Map<String, dynamic>.from(teamPlayersList[i]))
                   .teamName!
                   .isEmpty) {
+
             reseverd.add(PlayerInfoModel.fromMap(
                 Map<String, dynamic>.from(teamPlayersList[i])));
           }

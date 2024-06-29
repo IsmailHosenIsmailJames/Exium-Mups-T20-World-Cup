@@ -461,6 +461,7 @@ class _YourTeamState extends State<YourTeam> {
                                   Fluttertoast.showToast(
                                       msg: "Something went worng");
                                 }
+
                                 Get.offAll(() => const InitRoutes());
                               } else {
                                 Fluttertoast.showToast(
