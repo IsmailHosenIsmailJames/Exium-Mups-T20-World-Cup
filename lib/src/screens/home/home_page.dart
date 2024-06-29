@@ -58,8 +58,11 @@ class _HomePageState extends State<HomePage> {
 
           int max = 0;
           for (int i = 0; i < listOfPalyers.length; i++) {
-            if (listOfPalyers[i]['update_count'] > max) {
-              max = listOfPalyers[i]['update_count'];
+            if (listOfPalyers[i].keys.contains("update_count") &&
+                listOfPalyers[i]['update_count'].runtimeType != bool) {
+              if (listOfPalyers[i]['update_count'] as int > max) {
+                max = listOfPalyers[i]['update_count'];
+              }
             }
           }
           final x = Get.put(PlayersController());

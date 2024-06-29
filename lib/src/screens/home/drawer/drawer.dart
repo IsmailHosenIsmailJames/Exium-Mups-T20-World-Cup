@@ -121,7 +121,7 @@ class _MyDrawerState extends State<MyDrawer> {
                           List<Map>.from(decodeData["data"]);
 
                       if (listOfPalyers.length == 11) {
-                        updateCount = listOfPalyers[0]['update_count'];
+                        updateCount = listOfPalyers[0]['update_count'] ?? 0;
 
                         await Hive.box("info").put("team", listOfPalyers);
                         await Hive.box("info").put(
@@ -131,8 +131,12 @@ class _MyDrawerState extends State<MyDrawer> {
                       }
                       int max = 0;
                       for (int i = 0; i < listOfPalyers.length; i++) {
-                        if (listOfPalyers[i]['update_count'] > max) {
-                          max = listOfPalyers[i]['update_count'];
+                        if (listOfPalyers[i].keys.contains("update_count") &&
+                            listOfPalyers[i]['update_count'].runtimeType !=
+                                bool) {
+                          if (listOfPalyers[i]['update_count'] as int > max) {
+                            max = listOfPalyers[i]['update_count'];
+                          }
                         }
                       }
                       final x = Get.put(PlayersController());

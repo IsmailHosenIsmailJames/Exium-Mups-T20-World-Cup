@@ -114,6 +114,9 @@ class _YourTeamState extends State<YourTeam> {
     return false;
   }
 
+  TextEditingController teamName = TextEditingController(
+      text: Hive.box("info").get("teamName", defaultValue: null) ?? "");
+
   @override
   Widget build(BuildContext context) {
     if (widget.willUpdate) {
@@ -144,12 +147,6 @@ class _YourTeamState extends State<YourTeam> {
                               0 < 4 - widget.updateCount
                       ? null
                       : () async {
-                          TextEditingController teamName =
-                              TextEditingController(
-                                  text: Hive.box("info").get("teamName",
-                                          defaultValue: null) ??
-                                      "");
-
                           if (widget.willUpdate == false) {
                             showDialog(
                               context: context,
@@ -275,7 +272,9 @@ class _YourTeamState extends State<YourTeam> {
                                                             playerListControlller
                                                                 .selectedPlayer[
                                                                     i]
-                                                                .playerCode
+                                                                .playerCode,
+                                                        "teamName":
+                                                            teamName.text.trim()
                                                       });
                                                     }
 
@@ -308,14 +307,41 @@ class _YourTeamState extends State<YourTeam> {
                                                     if (response.statusCode ==
                                                         200) {
                                                       //save data to local
-                                                      await box.put(
-                                                          "team", playersList);
-                                                      await box.put("teamName",
-                                                          teamName.text);
-                                                      Get.offAll(
-                                                        () =>
-                                                            const InitRoutes(),
+                                                      if (Navigator.canPop(
+                                                          context)) {
+                                                        Navigator.pop(context);
+                                                      }
+
+                                                      await Future.delayed(
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  200));
+                                                      http.Response response2 =
+                                                          await http.get(
+                                                        Uri.parse(
+                                                          "http://116.68.200.97:6048/api/v1/selected_player_list?user_id=${user.id}",
+                                                        ),
                                                       );
+                                                      if (response2
+                                                              .statusCode ==
+                                                          200) {
+                                                        await box.put(
+                                                            "team",
+                                                            jsonDecode(response2
+                                                                .body)['data']);
+                                                        await box.put(
+                                                            "teamName",
+                                                            teamName.text);
+                                                        Get.offAll(
+                                                          () =>
+                                                              const InitRoutes(),
+                                                        );
+                                                      } else {
+                                                        Fluttertoast.showToast(
+                                                            msg:
+                                                                "Something went worng");
+                                                      }
+
                                                       Fluttertoast.showToast(
                                                           msg: jsonDecode(
                                                                   response
@@ -417,18 +443,25 @@ class _YourTeamState extends State<YourTeam> {
                                 ),
                               );
                               if (response.statusCode == 200) {
-                                List<Map> teamToSave = [];
-                                for (int i = 0;
-                                    i <
-                                        playerListControlller
-                                            .selectedPlayer.length;
-                                    i++) {
-                                  teamToSave.add(playerListControlller
-                                      .selectedPlayer[i]
-                                      .toMap());
+                                await Future.delayed(
+                                    const Duration(milliseconds: 200));
+                                http.Response response2 = await http.get(
+                                  Uri.parse(
+                                    "http://116.68.200.97:6048/api/v1/selected_player_list?user_id=${user.id}",
+                                  ),
+                                );
+                                if (response2.statusCode == 200) {
+                                  await box.put("team",
+                                      jsonDecode(response2.body)['data']);
+                                  await box.put("teamName", teamName.text);
+                                  Get.offAll(
+                                    () => const InitRoutes(),
+                                  );
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: "Something went worng");
                                 }
-                                final box = Hive.box("info");
-                                await box.put("team", teamToSave);
+
                                 Get.offAll(() => const InitRoutes());
                               } else {
                                 Fluttertoast.showToast(

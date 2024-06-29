@@ -3,9 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/home_tab/home_tab_controller_getx.dart';
 import 'package:exium_mups_t20_world_cup/src/screens/home/live_web_score/web_view_live_score.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
@@ -14,7 +12,6 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../../core/get_uri_images.dart';
 import '../../../models/players_info_model.dart';
 import '../controllers/players_controller.dart';
 import '../controllers/user_info_controller.dart';
@@ -130,6 +127,9 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
   }
 
   final x = Get.put(HomeTabControllerGetx());
+
+  String name = Hive.box("info").get("teamName");
+  
   @override
   Widget build(BuildContext context) {
     return GetX<HomeTabControllerGetx>(
@@ -328,7 +328,7 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
                                     ),
                                   ),
                                   Text(
-                                    Hive.box("info").get("teamName"),
+                                    name,
                                     style: const TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
@@ -681,13 +681,36 @@ window.addEventListener('keydown', preventDefaultForScrollKeys, false);
           children: [
             SizedBox(
               height: 120,
-              width: 120,
-              child: CachedNetworkImage(
-                imageUrl:
-                    "http://116.68.200.97:6048/images/players/${player.playerImage}",
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                margin: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                    image: CachedNetworkImageProvider(
+                      "http://116.68.200.97:6048/images/players/${player.playerImage}",
+                    ),
+                    fit: BoxFit.fitHeight,
+                  ),
+                  color:
+                      const Color.fromARGB(255, 41, 141, 255).withOpacity(0.2),
+                ),
+                alignment: Alignment.bottomRight,
+                child: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white.withOpacity(0.7)),
+                  child: Text(
+                    "${player.totalPoint ?? 0}",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 0, 56, 141),
+                    ),
+                  ),
+                ),
+
               ),
             ),
             Center(

@@ -69,7 +69,7 @@ class PlayerInfoModel {
         countryImage: json["country_image"],
         runPoint: json["run_point"],
         wicketPoint: json["wicket_point"],
-        updateCount: json["update_count"],
+        updateCount: json["update_count"] ?? 0,
         totalPoint: json["total_point"],
       );
 
@@ -83,7 +83,7 @@ class PlayerInfoModel {
         "country_image": countryImage,
         "run_point": runPoint,
         "wicket_point": wicketPoint,
-        "update_count": updateCount,
+        "update_count": updateCount ?? 0,
         "total_point": totalPoint,
       };
 }
