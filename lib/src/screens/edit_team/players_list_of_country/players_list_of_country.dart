@@ -593,10 +593,8 @@ class _PlayerListState extends State<PlayerList> {
                             if ((PlayesrMaxMinRoules.max[role] ?? 3) >
                                 alreadySelectedSameRole) {
                               if (widget.willUpdate) {
-                                print("object");
                                 int c = getPlayerChangeCount(
                                     playerListControlller.selectedPlayer);
-                                print("object");
 
                                 if (!(4 - c >= 0)) {
                                   showDialog(
